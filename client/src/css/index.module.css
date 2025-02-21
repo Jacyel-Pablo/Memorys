@@ -1,0 +1,126 @@
+.corpo{
+    height: 100vh;
+    width: 100vw;
+    align-content: center;
+    justify-items: center;
+}
+.container{
+    height: 75%;
+    width: 50%;
+    border: 2px solid;
+}
+.container__titulo{
+    font-size: 260%;
+    margin: 20px 0px;
+    text-align: center;
+}
+.container__textos{
+    margin-left: 10%;
+    font-size: 150%;
+}
+.container__campos{
+    height: 9%;
+    width: 80%;
+    margin: 5px 10%;
+    padding-left: 5%;
+    border-radius: 1em;
+    font-size: 110%;
+}
+.container__esqueceu__senha{
+    margin: 3% 15%;
+    font-size: 130%;
+}
+.container__botao__entrar{
+    background-color: var(--cor-azul);
+    border: 0px solid;
+    padding-left: 0px;
+    color: white;
+}
+.container__botao__entrar:hover{
+    background-color: var(--cor-azul-escuro);
+}
+.container__botao__criar__conta{
+    color: var(--cor-azul);
+    border: 2px solid;
+    border-color: var(--cor-azul);
+    background-color: white;
+    padding-left: 0px;
+}
+.container__botao__criar__conta:hover{
+    background-color: var(--cor-azul);
+    color: white;
+}
+
+/* CSS da pagína criar_conta.jsx */
+
+.container__escolher__arquivo{
+    margin-top: 2%;
+    margin-bottom: 1%;
+    margin-left: 10%;
+}
+.container__botao__enviar{
+    height: 9%;
+    width: 30%;
+    margin-top: 0.5%;
+    margin-left: 60%;
+    border-radius: 1em;
+}
+.container__botao__enviar:hover{
+    background-color: var(--cor-azul-escuro);
+}
+
+@media only screen and (max-width: 900px) {
+    .container{
+        width: 100%;
+        border: 2px solid;
+    }
+    .container__titulo{
+        font-size: 260%;
+        margin: 20px 0px;
+        text-align: center;
+    }
+    .container__textos{
+        margin-left: 7%;
+        font-size: 130%;
+    }
+    .container__campos{
+        height: 6%;
+        width: 90%;
+        margin: 5px 5%;
+        padding-left: 5%;
+        border-radius: 1em;
+        font-size: 110%;
+    }
+    .container__esqueceu__senha{
+        margin: 3% 15%;
+        font-size: 130%;
+    }
+    .container__botao__entrar{
+        background-color: var(--cor-azul);
+        border: 0px solid;
+        padding-left: 0px;
+        color: white;
+    }
+    .container__botao__criar__conta{
+        color: var(--cor-azul);
+        border: 2px solid;
+        border-color: var(--cor-azul);
+        background-color: white;
+        padding-left: 0px;
+    }
+
+    /* CSS da pagína criar_conta.jsx */
+
+    .container__escolher__arquivo{
+        margin-top: 2%;
+        margin-bottom: 1%;
+        margin-left: 6%;
+    }
+    .container__botao__enviar{
+        height: 9%;
+        width: 30%;
+        margin-top: 3%;
+        margin-left: 63%;
+        border-radius: 1em;
+    }
+}

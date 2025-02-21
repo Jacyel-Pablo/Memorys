@@ -1,0 +1,286 @@
+.corpo2{
+    height: 83%;
+    display: grid;
+    grid-template-columns: 40% 30% 30%;
+}
+.container1{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+.container1__1{
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+}
+.container1__titulo{
+    margin-top: 40%;
+    margin-bottom: 3%;
+    font-size: 250%;
+}
+.container1__foto__perfil{
+    height: 200px;
+    width: 200px;
+    border-radius: 7em;
+    display: block;
+}
+.container1__editar__foto{
+    margin-top: -10%;
+    margin-left: 35%;
+    position: relative;
+    display: flex;
+
+    height: 90px;
+    width: 90px;
+    /* margin-left: -10%; */
+}
+.container1__editar__foto__lapis{
+    height: 100%;
+    width: 100%;
+}
+.container1__editar__foto__file{
+    margin-left: -100%;
+    opacity: 0;
+}
+
+/* Área do nome do usuário */
+.user__name{
+    margin: 2%;
+    font-size: 140%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.botao__sair{
+    height: 5vh;
+    width: 17vw;
+    margin-bottom: 3%;
+    color: white;
+    background-color: gray;
+    border-radius: 2em;
+}
+.botao__sair:hover{
+    background-color: rgb(94, 94, 94);
+}
+.texto__apagar__conta__mobile{
+    margin-top: 30%;
+    margin-left: 6%;
+    margin-bottom: 4%;
+    color: red;
+    font-size: 0%;
+}
+.texto__apagar__conta__pc{
+    font-size: 120%;
+}
+.botao__apagar__conta__mobile{
+    height: 0vh;
+    width: 0vw;
+    border: 0px solid;
+    background-color: red;
+    color: white;
+    border-radius: 1.5em;
+}
+.botao__apagar__conta__mobile:hover{
+    background-color: rgb(206, 63, 63);
+}
+.botao__apagar__conta__pc{
+    height: 10%;
+    width: 30%;
+    margin-left: 5%;
+}
+
+.container2{
+    height: 100%;
+    width: 100%;
+}
+
+.perfil__foto__remover{
+    border-radius: "0em"; 
+    height: "50px";
+    width: "50px";
+}
+
+/* Caixa de deleta */
+.del{
+    background-color: rgba(165, 165, 165, 0.7);
+    z-index: 9999;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.del__box{
+    height: 50%;
+    width: 35%;
+    /* margin: 0% 10%; */
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid;
+}
+.del__box__text{
+    height: 80%;
+    border-bottom: 2px solid;
+    font-size: 150%;
+    padding: 4% 4%;
+}
+.del__box__botoes{
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+.del__box__input{
+    height: 80%;
+    width: 30%;
+    border: 0px solid;
+    border: 1px solid;
+    border-radius: 1em;
+    margin-right: 3%;
+}
+.del__box__input__apagar{
+    color: white;
+    background-color: red;
+    border: 1px solid;
+}
+.del__box__input__apagar:hover{
+    background-color: rgb(206, 63, 63);
+}
+
+@media only screen and (max-width: 900px) {
+    .corpo2{
+        height: 83%;
+        display: grid;
+        grid-template-columns: 100% 0% 0%;
+    }
+    .container1{
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .container1__1{
+        justify-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .container1__titulo{
+        margin: 3% 0px;
+        font-size: 250%;
+    }
+    .container1__foto__perfil{
+        height: 200px;
+        width: 200px;
+        border-radius: 7em;
+        display: block;
+    }
+    .container1__editar__foto{
+        margin-top: -20%;
+        margin-left: 50%;
+        position: relative;
+        display: flex;
+
+        height: 20vw;
+        width: 20vw;
+        /* margin-left: -10%; */
+    }
+    .container1__editar__foto__lapis{
+        height: 100%;
+        width: 100%;
+    }
+    .container1__editar__foto__file{
+        margin-left: -100%;
+        opacity: 0;
+    }
+    
+    /* Área do nome do usuário */
+    .user__name{
+        margin: 2%;
+        font-size: 140%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .botao__sair{
+        height: 5vh;
+        width: 50vw;
+        margin-bottom: 5%;
+        color: white;
+        background-color: gray;
+        border-radius: 2em;
+    }
+    .texto__apagar__conta__mobile{
+        margin: 4% 0%;
+        color: red;
+        font-size: 100%;
+    }
+    .texto__apagar__conta__pc{
+        font-size: 0%;
+    }
+    .botao__apagar__conta__mobile{
+        height: 5vh;
+        width: 50vw;
+        border: 0px solid;
+        background-color: red;
+        color: white;
+    }
+    .botao__apagar__conta__pc{
+        height: 0vh;
+        width: 0vw;
+    }
+
+    /* Redes sociais */
+    .perfil__foto__remover{
+        font-size: 0-x;
+    }
+
+    /* Caixa de deleta */
+    .del{
+        background-color: rgba(165, 165, 165, 0.7);
+        z-index: 9999;
+        position: fixed;
+        display: flex;
+        align-items: center;
+    }
+
+
+    .del__box{
+        height: 50%;
+        width: 80%;
+        margin: 0% 10%;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 2px solid;
+    }
+    .del__box__text{
+        height: 80%;
+        border-bottom: 2px solid;
+        font-size: 150%;
+        padding: 4% 4%;
+    }
+    .del__box__botoes{
+        height: 20%;
+        display: flex;
+        align-items: center;
+        justify-content: right;
+    }
+    .del__box__input{
+        height: 80%;
+        width: 30%;
+        border: 0px solid;
+        border: 1px solid;
+        border-radius: 1em;
+        margin-right: 3%;
+    }
+    .del__box__input__apagar{
+        color: white;
+        background-color: red;
+        border: 1px solid;
+    }
+}
