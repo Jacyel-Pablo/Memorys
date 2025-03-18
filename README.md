@@ -53,3 +53,5 @@ Para inciar use os seguintes comandos
 <p>npm run test</p>
 
 <p><strong>Pronto assim que você terminar de usa esses comandos o teste do back-end vai se iniciado</strong></p>
+
+<p><strong>PS: Os emails que forem enviados poderão se visto no terminal já que foi utilizado um email de teste</strong></p>
