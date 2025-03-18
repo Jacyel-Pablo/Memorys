@@ -1,0 +1,20 @@
+{
+  "type": "module",
+  "scripts": {
+    "server": "node --watch config/server.js",
+    "test": "node --watch config/testes/testes.test.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.0",
+    "prisma": "^6.4.1",
+    "supertest": "^7.0.0",
+    "zod": "^3.24.2"
+  }
+}

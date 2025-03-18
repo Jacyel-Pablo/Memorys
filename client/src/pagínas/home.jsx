@@ -13,7 +13,7 @@ export default function Home()
                 <input className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                    <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
                 </a>
             </nav>
 

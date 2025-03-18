@@ -1,8 +1,28 @@
 import estilo from "../css/perfil user.module.css"
 import estilos2 from "../css/home.module.css"
+import { useState, useEffect } from "react"
 
 export default function Perfil__user()
 {
+
+    const [ dados, setDados] = useState({
+        nome: ""
+    })
+
+    function nome()
+    {
+        fetch(`http://localhost:3000/pegar__nome?email=${localStorage.getItem("email")}`).then(nome => nome.json()).then(nome => {
+            setDados(copiar => ({
+                ...copiar,
+                nome: nome.nome
+            }))
+        })
+    }
+
+    useEffect(() => {
+        nome()
+    }, [])
+
     return (
         <>
             <div className={estilo.corpo}>
@@ -11,7 +31,7 @@ export default function Perfil__user()
                     <input className="buscar" type="search" />
                     
                     <a href="/perfil">
-                        <img className="foto_perfil" src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                        <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
                     </a>
                 </nav>
 
@@ -20,9 +40,9 @@ export default function Perfil__user()
                     <div className={estilo.container__infor}>
                         <div className={estilo.container__infor__parte1}>
                             <div>
-                                <img className={estilo.container__infor__foto} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                                <img className={estilo.container__infor__foto} src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
 
-                                <p>JacyelGamer2</p>
+                                <p>{dados.nome}</p>
 
                                 <div className={estilo.like__deslike}>
                                     <div className={estilo.like}>

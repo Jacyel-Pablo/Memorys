@@ -1,7 +1,7 @@
 import estilos from "../css/configuracao conta.module.css"
 import estilos2 from "../css/home.module.css"
 import lapis from "../assets/Lapis icone.png"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Configuracao_conta()
 {
@@ -10,8 +10,22 @@ export default function Configuracao_conta()
         alturar_largura_deleta_conta: "0",
         input__file__h_w: "100",
         font__paragrafo: "0",
-        contado: 0
+        width__input__nome: "0",
+        font__nome: "100",
+        contado: 0,
+        contado__lapis__nome: 0,
+        flag__alterar__foto: 0,
+        foto: `http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}&id=${0}`,
+        nome: ""
     })
+
+    function inserir_dados(e)
+    {
+        setDados(copiar => ({
+            ...copiar,
+            [e.target.name]: e.target.value
+        }))
+    }
 
     function deletar__conta__confirmacao(e)
     {
@@ -40,6 +54,103 @@ export default function Configuracao_conta()
         }
     }
 
+    async function alterar__foto(e)
+    {
+        const form = new FormData()
+        form.append("foto", e.target.files[0])
+        form.append("email", localStorage.getItem("email"))
+
+        try {
+            await fetch(`http://localhost:3000/alterar__foto`, {
+                method: "PUT",
+                body: form
+    
+            }).then(res => res.json()).then(res => {
+                if (res) {
+                    alert("Foto alterada com sucesso!")
+    
+                    setDados(copiar => ({
+                        ...copiar,
+                        flag__alterar__foto: dados.flag__alterar__foto + 1,
+                        foto: `http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}&id=${dados.flag__alterar__foto + 1}`
+                    }))
+    
+                } else {
+                    alert("Erro ao alterar foto!")
+                }
+            })
+
+        } catch (e) {
+            alert("Erro ao alterar foto!")
+        }
+    }
+
+    function nome()
+    {
+        fetch(`http://localhost:3000/pegar__nome?email=${localStorage.getItem("email")}`).then(nome => nome.json()).then(nome => {
+            setDados(copiar => ({
+                ...copiar,
+                nome: nome.nome
+            }))
+        })
+    }
+
+    async function renomeia()
+    {
+        if (dados.contado__lapis__nome % 2 == 0) {
+            setDados(copiar => ({
+                ...copiar,
+                width__input__nome: "30",
+                font__nome: "0",
+                contado__lapis__nome: dados.contado__lapis__nome + 1
+            }))
+
+        } else {
+            await fetch(`http://localhost:3000/alterar__nome?email=${localStorage.getItem("email")}&nome=${dados.nome}`, {method: "PUT"}).then(res => res.json()).then(res => {
+                
+                setDados(copiar => ({
+                    ...copiar,
+                    width__input__nome: "0",
+                    font__nome: "100",
+                    contado__lapis__nome: dados.contado__lapis__nome + 1
+                }))
+
+                if (res.valor) {
+                    alert("Nome alterado com sucesso!")
+
+                } else {
+                    alert("Erro ao alterar nome!")
+                }
+
+            })
+
+        }
+    }
+
+    function sair_da_conta()
+    {
+        localStorage.clear()
+        window.location.href = "/"
+    }
+
+    function apagar_conta()
+    {
+        fetch(`http://localhost:3000/deletar__conta?email=${localStorage.getItem("email")}`, {method: "DELETE"}).then(res => res.json()).then(res => {
+            if (res) {
+                alert("Conta apagada com sucesso!")
+                localStorage.clear()
+                window.location.href = "/"
+
+            } else {
+                alert("Erro ao apagar conta!")
+            }
+        })
+    }
+
+    useState(() => {
+        nome()
+    }, [])
+
     return(
         <div className="corpo">
             {/* Essa div vai aparece após o botão de deletar conta for pressionado */}
@@ -52,7 +163,7 @@ export default function Configuracao_conta()
                     <div className={estilos.del__box__botoes}>
                         <input className={estilos.del__box__input} onClick={(e) => deletar__conta__confirmacao(e)} id="deletar" type="button" value="Cancelar" />
                         
-                        <input className={`${estilos.del__box__input} ${estilos.del__box__input__apagar}`} type="button" value="Apagar" />
+                        <input className={`${estilos.del__box__input} ${estilos.del__box__input__apagar}`} onClick={() => apagar_conta()} type="button" value="Apagar" />
                     </div>
                 </div>
             </div>
@@ -62,7 +173,7 @@ export default function Configuracao_conta()
                 <input className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                    <img className="foto_perfil" src={dados.foto} alt="Foto de perfil" />
                 </a>
             </nav>
             
@@ -72,25 +183,25 @@ export default function Configuracao_conta()
                     <div className={estilos.container1__1}>
                         <h1 className={estilos.container1__titulo}>Configurações:</h1>
 
-                        <img className={estilos.container1__foto__perfil} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                        <img className={estilos.container1__foto__perfil} src={dados.foto} alt="Foto de perfil" />
                         
                         <div className={estilos.container1__editar__foto}>
                             <img className={estilos.container1__editar__foto__lapis} src={lapis} alt="Editar foto" />
 
-                            <input style={{"height": `${dados.input__file__h_w}%`, "width": `${dados.input__file__h_w}%`}} className={estilos.container1__editar__foto__file} type="file" name="" id="" />
+                            <input onChange={(e) => alterar__foto(e)} style={{"height": `${dados.input__file__h_w}%`, "width": `${dados.input__file__h_w}%`}} className={estilos.container1__editar__foto__file} type="file" name="foto" />
                         </div>
 
                         {/* Campo do nome do usuário */}
 
                         <div className={estilos.user__name}>
-                            <p>JacyelGamer2</p>
+                            <p style={{"fontSize": dados.font__nome + "%"}}>{dados.nome}</p>
                             {/* Input de renomeia */}
-                            <input style={{"width": "0%", "border": "0 none"}} type="text" />
+                            <input onChange={(e) => inserir_dados(e)} style={{"width": dados.width__input__nome + "%", "borderTop": "0px", "borderLeft": "0px", "borderRight": "0px"}} type="text" name="nome" />
                             
-                            <img onClick={() => alert("alterar nome")} src={lapis} alt="Trocar nome" />
+                            <img onClick={() => renomeia()} src={lapis} alt="Trocar nome" />
                         </div>
 
-                        <input className={estilos.botao__sair} type="button" value="Sair" />
+                        <input className={estilos.botao__sair} onClick={() => sair_da_conta()} type="button" value="Sair" />
 
                         <div style={{"textAlign": "left"}}>
                             <p>Essa ação vai remove <br/>

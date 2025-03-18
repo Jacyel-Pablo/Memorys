@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                String   @id @default(cuid())
+  foto_de_perfil    String?
+  nome              String   @unique
+  email             String   @unique
+  senha             String
+  ativo             Boolean  @default(false)
+  msg               Mensagem[]
+  respostas         Respostas[]
+  seguidores        Seguidores[]
+  seguindo          Seguindo[]
+}
+
+model Mensagem {
+  id                 String   @id @default(cuid())
+  foto_de_perfil     String?
+  nome               String   @unique
+  data_de_publicacao DateTime @default(now())
+  texto_da_mensagem  String
+  likes              Int
+  deslikes           Int
+
+  usuario           Usuario  @relation(fields: [nome], references: [nome])
+  respostas         Respostas[]
+}
+
+model Respostas {
+  id                 String   @id @default(cuid())
+  id_mensagem        String
+  foto_de_perfil     String?
+  nome               String   @unique
+  data_de_publicacao DateTime @default(now())
+  texto_da_mensagem  String
+  likes              Int
+  deslikes           Int
+
+  usuario           Usuario  @relation(fields: [nome], references: [nome])
+  id_msg            Mensagem @relation(fields: [id_mensagem], references: [id])
+}
+
+model Seguidores {
+  id                 String   @id @default(cuid())
+  userid             String
+  foto_de_perfil     String?
+  nome               String
+  data               DateTime @default(now())
+
+  usuario            Usuario  @relation(fields: [userid], references: [id])
+}
+
+model Seguindo {
+  id                 String   @id @default(cuid())
+  userid             String
+  foto_de_perfil     String?
+  nome               String
+  data               DateTime @default(now())
+
+  usuario            Usuario  @relation(fields: [userid], references: [id])
+}

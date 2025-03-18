@@ -1,0 +1,9 @@
+POST http://localhost:3000/criar__conta
+Content-Type: application/json
+
+{
+    "foto": "Teste",
+    "nome": "JacyelGamer2",
+    "email": "jacyel",
+    "senha": "123456"
+}
