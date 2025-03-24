@@ -34,7 +34,7 @@ export default function Index()
             fetch(`http://localhost:3000/login?email=${dados.email}&senha=${dados.senha}`).then(resposta => resposta.json()).then(resposta => {
                 if (resposta[0] === true) {
                     localStorage.setItem("token", resposta[1])
-                    localStorage.setItem("email", dados.email)
+                    localStorage.setItem("id", resposta[2])
                     location.href = "/home"
     
                 } else {

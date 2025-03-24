@@ -15,7 +15,7 @@ export default function Configuracao_conta()
         contado: 0,
         contado__lapis__nome: 0,
         flag__alterar__foto: 0,
-        foto: `http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}&id=${0}`,
+        foto: `http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${0}`,
         nome: ""
     })
 
@@ -58,7 +58,7 @@ export default function Configuracao_conta()
     {
         const form = new FormData()
         form.append("foto", e.target.files[0])
-        form.append("email", localStorage.getItem("email"))
+        form.append("id", localStorage.getItem("id"))
 
         try {
             await fetch(`http://localhost:3000/alterar__foto`, {
@@ -72,7 +72,7 @@ export default function Configuracao_conta()
                     setDados(copiar => ({
                         ...copiar,
                         flag__alterar__foto: dados.flag__alterar__foto + 1,
-                        foto: `http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}&id=${dados.flag__alterar__foto + 1}`
+                        foto: `http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${dados.flag__alterar__foto + 1}`
                     }))
     
                 } else {
@@ -87,7 +87,7 @@ export default function Configuracao_conta()
 
     function nome()
     {
-        fetch(`http://localhost:3000/pegar__nome?email=${localStorage.getItem("email")}`).then(nome => nome.json()).then(nome => {
+        fetch(`http://localhost:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
             setDados(copiar => ({
                 ...copiar,
                 nome: nome.nome
@@ -106,7 +106,7 @@ export default function Configuracao_conta()
             }))
 
         } else {
-            await fetch(`http://localhost:3000/alterar__nome?email=${localStorage.getItem("email")}&nome=${dados.nome}`, {method: "PUT"}).then(res => res.json()).then(res => {
+            await fetch(`http://localhost:3000/alterar__nome?id=${localStorage.getItem("id")}&nome=${dados.nome}`, {method: "PUT"}).then(res => res.json()).then(res => {
                 
                 setDados(copiar => ({
                     ...copiar,
@@ -135,7 +135,7 @@ export default function Configuracao_conta()
 
     function apagar_conta()
     {
-        fetch(`http://localhost:3000/deletar__conta?email=${localStorage.getItem("email")}`, {method: "DELETE"}).then(res => res.json()).then(res => {
+        fetch(`http://localhost:3000/deletar__conta?id=${localStorage.getItem("id")}`, {method: "DELETE"}).then(res => res.json()).then(res => {
             if (res) {
                 alert("Conta apagada com sucesso!")
                 localStorage.clear()
@@ -170,8 +170,9 @@ export default function Configuracao_conta()
 
             <nav className="menu">
                 <p className="logo">Memorys</p>
-                <input className="buscar" type="search" />
-                
+
+                <div></div>
+
                 <a href="/perfil">
                     <img className="foto_perfil" src={dados.foto} alt="Foto de perfil" />
                 </a>

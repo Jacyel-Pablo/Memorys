@@ -28,10 +28,10 @@ export default function Perfil__user()
             <div className={estilo.corpo}>
                 <nav className="menu">
                     <p className="logo">Memorys</p>
-                    <input className="buscar" type="search" />
-                    
+                    <div></div>
+
                     <a href="/perfil">
-                        <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
+                        <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                     </a>
                 </nav>
 
@@ -40,7 +40,7 @@ export default function Perfil__user()
                     <div className={estilo.container__infor}>
                         <div className={estilo.container__infor__parte1}>
                             <div>
-                                <img className={estilo.container__infor__foto} src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
+                                <img className={estilo.container__infor__foto} src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
 
                                 <p>{dados.nome}</p>
 

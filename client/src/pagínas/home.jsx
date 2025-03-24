@@ -2,18 +2,178 @@ import estilos from "../css/home.module.css"
 import fotos from "../assets/foto icone.png"
 import video from "../assets/video icone.png"
 import compartilhar from "../assets/compartilhar icone.png"
+import foto__default from "../assets/Default.png"
+import { useState } from "react"
 
 export default function Home()
 {
+    const [ dados, setDados ] = useState({
+        envio__mensagens: [
+            <>
+                <p className={`${estilos.mensagens__seguindo} ${estilos.mensagens__seguindo_android}`}>Ver lista de <a href="/">pessoas que você segue completa</a></p>
+
+                {/* Formulario para enviar as mensagens */}
+
+                <form className={estilos.enviar__mensagens}>
+
+                    <textarea className={estilos.enviar__mensagens__campor__escrita} name="" placeholder="Escreva algo:"></textarea>
+
+                    <input className={estilos.enviar__mensagens__botao} type="submit" value="Enviar" />
+                
+                    <div className={estilos.container__box}>
+                        <div className={estilos.container__box__foto}>
+
+                            <img className={estilos.container__box__foto__name} src={fotos} alt="Icone de fotos" />
+                        
+                            <input className={estilos.container__box__foto__file} type="file" name="" id="" />
+
+                        </div>
+
+                        <div className={estilos.container__box__foto}>
+
+                            <img className={estilos.container__box__foto__name} src={video} alt="Icone de fotos" />
+                        
+                            <input className={estilos.container__box__foto__file} type="file" name="" id="" />
+                        
+                        </div>
+                    </div>
+                </form>
+            </>,
+
+            <div key={1} className={estilos.container__mensagem}>
+                {/* Mensagem dos usuários */}
+
+                <div className={estilos.container__mensagem__cabecalho}>
+                    {/* Foto de perfil */}
+                    <div className={estilos.container__mensagem__cabecalho__foto}>
+                        <a href="/">
+                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                        </a>
+                    </div>
+
+                    <div className={estilos.container__mensagem__user__name}>
+                        <p>JacyelGamer2</p>
+                    </div>
+
+                    <div className={estilos.container__mensagem__data}>
+                        <p>03/02/2025</p>
+                    </div>
+                </div>
+
+                <div className={estilos.container__mensagem__corpo__msg}>
+                    <div className={estilos.container__mensagem__corpo}>
+                        <p>Olá blz</p>
+                    </div>
+                </div>
+                
+                <div className={estilos.container__mensagem__avaliacao}>
+                    
+                    <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Like: 0"/>
+
+                    <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Deslikes: 0"/>
+
+                    <div className={estilos.container__box__foto}>
+
+                        <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
+                                                
+                    </div>
+                </div>
+            </div>,
+
+            <div key={2} className={estilos.container__mensagem}>
+                {/* Mensagem dos usuários */}
+
+                <div className={estilos.container__mensagem__cabecalho}>
+                    {/* Foto de perfil */}
+                    <div className={estilos.container__mensagem__cabecalho__foto}>
+                        <a href="/">
+                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
+                        </a>
+                    </div>
+
+                    <div className={estilos.container__mensagem__user__name}>
+                        <p>JacyelGamer2</p>
+                    </div>
+
+                    <div className={estilos.container__mensagem__data}>
+                        <p>03/02/2025</p>
+                    </div>
+                </div>
+
+                <div className={estilos.container__mensagem__corpo__msg}>
+                    <div className={estilos.container__mensagem__corpo}>
+                        <p>Bom dia, rapaz esse projeto vai ficar muito massa depois do back-end.</p>
+                    </div>
+                </div>
+                
+                <div className={estilos.container__mensagem__avaliacao}>
+                    
+                    <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Like: 0"/>
+
+                    <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Deslikes: 0"/>
+
+                    <div className={estilos.container__box__foto}>
+
+                        <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
+                                                
+                    </div>
+                </div>
+            </div>
+            
+        ],
+        nome: ""
+    })
+
+    function pegar_dados(e)
+    {
+        setDados(copiar => ({
+            ...copiar,
+            [e.target.id]: e.target.value
+        }))
+    }
+
+    function procurar_usuario(e)
+    {
+
+        if (e.key === "Enter") {
+
+            fetch(`http://localhost:3000/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
+                let lista_html = []
+            
+                fetch(`http://localhost:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+
+                    for (let i = 0; i < dados1.length; i++) {
+
+                        if (dados1[i].nome != nome.nome) {
+                            lista_html.push(
+                                <a key={i} className={estilos.found} href="#">
+                                    <img className={estilos.found__imagem} src={`http://localhost:3000/pegar__fotos__perfil?link=${dados1[i].foto_de_perfil}`} alt="Foto de perfil" />
+        
+                                    <h1 className={estilos.found__nomes}>{dados1[i].nome}</h1>
+                                </a>
+                            )
+                        }
+
+                    }
+
+                    setDados(copiar => ({
+                        ...copiar,
+                        envio__mensagens: lista_html 
+                    }))
+                })
+
+            })
+        }
+    }
 
     return (
         <div className="corpo">
             <nav className="menu">
                 <p className="logo">Memorys</p>
-                <input className="buscar" type="search" />
+                <input tabIndex={0} id="nome" onChange={(e) => pegar_dados(e)} onKeyDown={(e) => procurar_usuario(e)} className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?email=${localStorage.getItem("email")}`} alt="Foto de perfil" />
+                    <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                 </a>
             </nav>
 
@@ -31,115 +191,11 @@ export default function Home()
 
                 </div>
 
+                {/* Parte de envio de mensagens e observar as mensagens do feed */}
                 <div className={estilos.mensagens}>
-                    <p className={`${estilos.mensagens__seguindo} ${estilos.mensagens__seguindo_android}`}>Ver lista de <a href="/">pessoas que você segue completa</a></p>
-
-                    {/* Formulario para enviar as mensagens */}
-
-                    <form className={estilos.enviar__mensagens}>
-
-                        <textarea className={estilos.enviar__mensagens__campor__escrita} name="" placeholder="Escreva algo:"></textarea>
-
-                        <input className={estilos.enviar__mensagens__botao} type="submit" value="Enviar" />
                     
-                        <div className={estilos.container__box}>
-                            <div className={estilos.container__box__foto}>
+                    {dados.envio__mensagens}
 
-                                <img className={estilos.container__box__foto__name} src={fotos} alt="Icone de fotos" />
-                            
-                                <input className={estilos.container__box__foto__file} type="file" name="" id="" />
-
-                            </div>
-
-                            <div className={estilos.container__box__foto}>
-
-                                <img className={estilos.container__box__foto__name} src={video} alt="Icone de fotos" />
-                            
-                                <input className={estilos.container__box__foto__file} type="file" name="" id="" />
-                            
-                            </div>
-                        </div>
-                    </form>
-                    
-                    {/* Mensagem dos usuários */}
-
-                    <div className={estilos.container__mensagem}>
-                        <div className={estilos.container__mensagem__cabecalho}>
-                            {/* Foto de perfil */}
-                            <div className={estilos.container__mensagem__cabecalho__foto}>
-                                <a href="/">
-                                    <img className={estilos.container__mensagem__cabecalho__foto__perfil} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
-                                </a>
-                            </div>
-
-                            <div className={estilos.container__mensagem__user__name}>
-                                <p>JacyelGamer2</p>
-                            </div>
-
-                            <div className={estilos.container__mensagem__data}>
-                                <p>03/02/2025</p>
-                            </div>
-                        </div>
-
-                        <div className={estilos.container__mensagem__corpo__msg}>
-                            <div className={estilos.container__mensagem__corpo}>
-                                <p>Olá blz</p>
-                            </div>
-                        </div>
-                        
-                        <div className={estilos.container__mensagem__avaliacao}>
-                            
-                            <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Like: 0"/>
-
-                            <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Deslikes: 0"/>
-
-                            <div className={estilos.container__box__foto}>
-
-                                <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
-                                                        
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Mensagem dos usuários */}
-
-                    <div className={estilos.container__mensagem}>
-                        <div className={estilos.container__mensagem__cabecalho}>
-                            {/* Foto de perfil */}
-                            <div className={estilos.container__mensagem__cabecalho__foto}>
-                                <a href="/">
-                                    <img className={estilos.container__mensagem__cabecalho__foto__perfil} src="https://media.tenor.com/Lk6mMX3yHqUAAAAd/little-witch-academia-atsuko-kagari.gif" alt="Foto de perfil" />
-                                </a>
-                            </div>
-
-                            <div className={estilos.container__mensagem__user__name}>
-                                <p>JacyelGamer2</p>
-                            </div>
-
-                            <div className={estilos.container__mensagem__data}>
-                                <p>03/02/2025</p>
-                            </div>
-                        </div>
-
-                        <div className={estilos.container__mensagem__corpo__msg}>
-                            <div className={estilos.container__mensagem__corpo}>
-                                <p>Bom dia, rapaz esse projeto vai ficar muito massa depois do back-end.</p>
-                            </div>
-                        </div>
-                        
-                        <div className={estilos.container__mensagem__avaliacao}>
-                            
-                            <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Like: 0"/>
-
-                            <input className={estilos.container__mensagem__avaliacao__like__deslike} type="button" value="Deslikes: 0"/>
-
-                            <div className={estilos.container__box__foto}>
-
-                                <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
-                                                        
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Minhas redes sociais */}

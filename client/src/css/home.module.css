@@ -11,6 +11,8 @@
     margin: 0px 7.5%;
     overflow-x: hidden;
     overflow-y: auto;
+    height: auto;
+    height: 100%;
     width: 85%;
     /* background-color: aqua; */
 }
@@ -163,6 +165,29 @@
     height: 30px;
     width: 30px;
 }
+.found{
+    height: 30%;
+    width: 95%;
+    color: black;
+    margin-top: 5%;
+    margin-left: 3.5%;
+    border: 2px solid;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    text-align: center;
+    align-items: center;
+    justify-items: center;
+}
+.found:hover{
+    color: black;
+}
+.found__nomes{
+    font-size: 200%;
+}
+.found__imagem{
+    border-radius: 10em;
+    width: 70%;
+}
 
 @media only screen and (max-width: 900px) {
     .corpo2{
@@ -311,5 +336,16 @@
     .container__mensagem__avaliacao__compartilhar{
         height: 30px;
         width: 30px;
+    }
+    .found{
+        height: 20%;
+        width: 95%;
+        grid-template-columns: 40% 60%;
+    }
+    .found__nomes{
+        font-size: 100%;
+    }
+    .found__imagem{
+        width: 70%;
     }
 }

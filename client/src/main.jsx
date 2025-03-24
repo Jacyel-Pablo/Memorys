@@ -18,7 +18,7 @@ const protecao = {
   "/configuracao_conta": <Configuracao_conta/>
 }
 
-const testes = false
+const testes = true
 
 function Protecao__telas()
 {

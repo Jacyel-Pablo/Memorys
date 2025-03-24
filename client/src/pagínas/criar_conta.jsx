@@ -24,6 +24,10 @@ export default function Criar_conta()
             const formData = new FormData()
             formData.append("foto", dados.foto)
             formData.append("nome", dados.nome)
+            setDados(copiar => ({
+                ...copiar,
+                email: dados.email.toLowerCase()
+            }))
             formData.append("email", dados.email)
             formData.append("senha", dados.senha)
     
