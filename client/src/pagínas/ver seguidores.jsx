@@ -1,8 +1,10 @@
 import estilos from "../css/ver seguidores.module.css"
 import estilos2 from "../css/home.module.css"
 
-export default function Ver_seguidores()
+export default function Ver_seguidores(props)
 {
+    const server = props.server
+
     return (
         <div className="corpo">
             <nav className="menu">
@@ -10,7 +12,7 @@ export default function Ver_seguidores()
                 <input className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                    <img className="foto_perfil" src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                 </a>
             </nav>
 

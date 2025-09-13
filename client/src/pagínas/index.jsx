@@ -2,7 +2,7 @@ import estilos from "../css/index.module.css"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
-export default function Index()
+export default function Index(props)
 {
     const [ dados, setDados ] = useState({
         esqueceu_senha_p: "Esqueceu sua ",
@@ -11,6 +11,8 @@ export default function Index()
         email: "",
         senha: ""
     })
+
+    const server = props.server
 
     function pegar_dados(e)
     {
@@ -31,10 +33,11 @@ export default function Index()
             alert("Os campos precisam ter pelo menos 3 caracteres")
 
         } else {
-            fetch(`http://localhost:3000/login?email=${dados.email}&senha=${dados.senha}`).then(resposta => resposta.json()).then(resposta => {
+            fetch(`http://${server}:3000/login?email=${dados.email}&senha=${dados.senha}`).then(resposta => resposta.json()).then(resposta => {
                 if (resposta[0] === true) {
                     localStorage.setItem("token", resposta[1])
                     localStorage.setItem("id", resposta[2])
+                    localStorage.setItem("email", dados.email)
                     location.href = "/home"
     
                 } else {

@@ -2,8 +2,48 @@ POST http://localhost:3000/criar__conta
 Content-Type: application/json
 
 {
-    "foto": "Teste",
-    "nome": "JacyelGamer2",
-    "email": "jacyel",
+    "nome": "JacyelGamer24",
+    "email": "jacyel23456@gmail.com",
     "senha": "123456"
 }
+
+###
+
+POST http://localhost:3000/enviar__mensagem
+Content-Type: application/json
+
+{
+    "id": "coloque um id de usuário",
+    "texto": "Testando 123"
+}
+
+###
+GET http://localhost:3000/pegar__mensagens?id_user=cmcngpay50000uptopzw8qtv7
+
+###
+GET http://localhost:3000/pegar__midia__mensagens?id=coloque aqui o id da mensagem
+
+###
+GET http://localhost:3000/pegar__mensagens?id_user=coloque aqui o id de um usuario
+
+### Enviar comentarios
+
+POST http://localhost:3000/enviar_comentarios
+Content-Type: application/json
+
+{
+    "id_mensagem": "cmcngq9vq0002uptoh6qgwdrm",
+    "email": "jacyell.moura@gmail.com",
+    "texto": "Eai blz"
+}
+
+### Pegar comentários
+
+GET http://localhost:3000/pegar__nome?id=cmfi6mg140000upaczfpp7ciz
+
+### Deletar conta
+
+DELETE http://localhost:3000/deletar__conta?id=cmfia7lx90000upukrp0yr8cj
+
+### Pegar nome com email
+GET http://localhost:3000/pegar__nome__usuario__comentario?email=jacyell.moura@gmail.com

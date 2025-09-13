@@ -2,26 +2,9 @@ import estilo from "../css/perfil user.module.css"
 import estilos2 from "../css/home.module.css"
 import { useState, useEffect } from "react"
 
-export default function Perfil__user()
+export default function Perfil__user(props)
 {
-
-    const [ dados, setDados] = useState({
-        nome: ""
-    })
-
-    function nome()
-    {
-        fetch(`http://localhost:3000/pegar__nome?email=${localStorage.getItem("email")}`).then(nome => nome.json()).then(nome => {
-            setDados(copiar => ({
-                ...copiar,
-                nome: nome.nome
-            }))
-        })
-    }
-
-    useEffect(() => {
-        nome()
-    }, [])
+    const server = props.server
 
     return (
         <>
@@ -31,7 +14,7 @@ export default function Perfil__user()
                     <div></div>
 
                     <a href="/perfil">
-                        <img className="foto_perfil" src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                        <img className="foto_perfil" src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                     </a>
                 </nav>
 
@@ -40,9 +23,7 @@ export default function Perfil__user()
                     <div className={estilo.container__infor}>
                         <div className={estilo.container__infor__parte1}>
                             <div>
-                                <img className={estilo.container__infor__foto} src={`http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
-
-                                <p>{dados.nome}</p>
+                                <img className={estilo.container__infor__foto} src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
 
                                 <div className={estilo.like__deslike}>
                                     <div className={estilo.like}>

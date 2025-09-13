@@ -10,6 +10,7 @@ const prisma = new PrismaClient()
 
 var token
 var id
+var id_msg
 var lista_dados
 
 describe("Aqui estão os testes para ver se as rotas estão funcionado", () => {
@@ -60,6 +61,57 @@ describe("Aqui estão os testes para ver se as rotas estão funcionado", () => {
         const response = await request(app).get(`/verificar__token?token=${token}`)
 
         assert.strictEqual(response.status, 200)
+    })
+
+    it("Envio da mensagem pelo usuário", async () => {
+        const response = await request(app).post("/enviar__mensagem").send(`id=${id}&texto="Olá, Mundo!"`)
+
+        id_msg = response.text.split(",")[1].replace('"', "").replace('"', "")
+
+        assert.strictEqual(response.status, 201)
+    })
+
+    it("Pegar a mensagem que foi compartilhada", async () => {
+        const response = await request(app).get(`/pegar__mensagens__compartilhada?id_user=${id}&id_msg=${id_msg}`)
+
+        assert.strictEqual(response.status, 200)
+    })
+
+    it("Curtir uma mensagem", async () => {
+        const response = await request(app).post("/curtir__mensagem").send(`id_msg=${id_msg}&id_user=${id}`)
+
+        assert.strictEqual(response.status, 201)
+    })
+
+    it("não gostei da mensagem", async () => {
+        const response = await request(app).post("/nao__gostei__mensagem").send(`id_msg=${id_msg}&id_user=${id}`)
+
+        assert.strictEqual(response.status, 201)
+    })
+
+    it("Deletar as mensagens", async () => {
+        const response = await request(app).delete("/deletar__mensagem").send(`id_msg=${id_msg}&id_user=${id}`)
+
+        assert.strictEqual(response.status, 201)
+    })
+
+    it("Pegar todas as mensagens do banco de dados", async () => {
+        const response = await request(app).get(`/pegar__mensagens?id_user=${id}`)
+
+        assert.strictEqual(response.status, 200)
+    })
+
+    it ("Pegar midias que foram anexadas a uma mensagem", async () => {
+        const response = await request(app).get(`/pegar__midia__mensagens?id=${id}`)
+
+        assert.strictEqual(response.status, 200)
+    })
+
+    it("Pegar arquivos de fotos ou videos da mensagem", async () => {
+        const response = await request(app).get("/pegar__fotos__videos__mensagens?tipo=foto&url=testando123")
+
+        // Como não temos um arquivo a rota vai retorna 404
+        assert.strictEqual(response.status, 404)
     })
 
     it("Encontrar usuário", async () => {

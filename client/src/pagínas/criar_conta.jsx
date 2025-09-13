@@ -1,7 +1,7 @@
 import estilos from "../css/index.module.css"
 import { useState } from "react"
 
-export default function Criar_conta()
+export default function Criar_conta(props)
 {
     const [ dados, setDados] = useState({
         foto: "",
@@ -9,6 +9,8 @@ export default function Criar_conta()
         email: "",
         senha: ""
     })
+
+    const server = props.server
 
     async function submit(e)
     {
@@ -32,7 +34,7 @@ export default function Criar_conta()
             formData.append("senha", dados.senha)
     
             try {
-                await fetch("http://localhost:3000/criar__conta", {
+                await fetch(`http://${server}:3000/criar__conta`, {
                     method: "POST",
                     // headers: {
                     //     "Content-Type": "application/json",

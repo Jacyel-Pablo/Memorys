@@ -24,6 +24,7 @@
 .container1__foto__perfil{
     height: 200px;
     width: 200px;
+    object-fit: contain;
     border-radius: 7em;
     display: block;
 }
@@ -249,8 +250,6 @@
         display: flex;
         align-items: center;
     }
-
-
     .del__box{
         height: 50%;
         width: 80%;

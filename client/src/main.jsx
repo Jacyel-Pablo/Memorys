@@ -11,21 +11,24 @@ import Ativar__conta from './pagínas/ativar__conta.jsx'
 import './index.css'
 import App from './App.jsx'
 
+// Coloque aqui a porta do servidor e no arquivo server.js ultima linha
+const port_server = "localhost"
+
 const protecao = {
-  "/home": <Home/>,
-  "/perfil": <Perfil__user/>,
-  "/ver_seguidores": <Ver_seguidores/>,
-  "/configuracao_conta": <Configuracao_conta/>
+  "/home": <Home server={port_server}/>,
+  "/perfil": <Perfil__user server={port_server}/>,
+  "/ver_seguidores": <Ver_seguidores server={port_server}/>,
+  "/configuracao_conta": <Configuracao_conta server={port_server}/>
 }
 
-const testes = true
+const testes = false
 
 function Protecao__telas()
 {
   if (testes === false) {
     const [telas, setTelas] = useState(<></>)
 
-    fetch(`http://localhost:3000/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
+    fetch(`http://${port_server}:3000/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
       if (dados === true) {
         setTelas(protecao[window.location.pathname])
         
@@ -45,15 +48,15 @@ function Protecao__telas()
 const rotas = createBrowserRouter([
   {
     path: "/",
-    element: <Index/>
+    element: <Index server={port_server}/>
   },
   {
     path: "/criar_conta",
-    element: <Criar_conta/>
+    element: <Criar_conta server={port_server}/>
   },
   {
     path: "/ativar__conta",
-    element: <Ativar__conta/>
+    element: <Ativar__conta server={port_server}/>
   },
   {
     path: "/home",

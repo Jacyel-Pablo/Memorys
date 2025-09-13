@@ -1,5 +1,6 @@
 import jsonwebtoken from "jsonwebtoken";
 import nodemailer from "nodemailer"
+import dotenv from "dotenv"
 
 export async function criar_token(email)
 {

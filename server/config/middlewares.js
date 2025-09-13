@@ -10,11 +10,20 @@ function dividir_string(string)
   return string
 }
 
-export function storage(formatos_aceitos)
+export function storage(formatos_aceitos, dir)
 {
   const dest = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.resolve(path.dirname('') + "/config/files/foto_de_perfil"))
+      switch (file.fieldname) {
+        case "videos":
+          cb(null, path.resolve(path.dirname('') + "/config/files/videos"))
+          break
+
+        default:
+          cb(null, path.resolve(path.dirname('') + dir))
+          break
+      }
+      
     },
     filename: function (req, file, cb) {
       const string = dividir_string(file.originalname)
@@ -24,12 +33,32 @@ export function storage(formatos_aceitos)
 
   function fileFilter (req, file, cb) {
 
-    if (formatos_aceitos.includes(file.mimetype)) {
-      cb(null, true)
+    switch (file.fieldname) {
+      case "videos":
 
-    } else {
+        if (["video/mp4", "video/x-matroska"].includes(file.mimetype)) {
+          cb(null, true)
 
-      cb(new Error('Alguma coisa deu errado'))
+        } else {
+
+          cb(new Error('Alguma coisa deu errado'))
+
+        }
+
+        break
+
+      default:
+
+        if (formatos_aceitos.includes(file.mimetype)) {
+          cb(null, true)
+
+        } else {
+
+          cb(new Error('Alguma coisa deu errado'));
+
+        }
+
+        break
     }
       
   }

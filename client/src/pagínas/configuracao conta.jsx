@@ -3,8 +3,9 @@ import estilos2 from "../css/home.module.css"
 import lapis from "../assets/Lapis icone.png"
 import { useState, useEffect } from "react"
 
-export default function Configuracao_conta()
+export default function Configuracao_conta(props)
 {
+    const server = props.server
 
     const [ dados, setDados] = useState({
         alturar_largura_deleta_conta: "0",
@@ -15,7 +16,7 @@ export default function Configuracao_conta()
         contado: 0,
         contado__lapis__nome: 0,
         flag__alterar__foto: 0,
-        foto: `http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${0}`,
+        foto: `http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${0}`,
         nome: ""
     })
 
@@ -61,7 +62,7 @@ export default function Configuracao_conta()
         form.append("id", localStorage.getItem("id"))
 
         try {
-            await fetch(`http://localhost:3000/alterar__foto`, {
+            await fetch(`http://${server}:3000/alterar__foto`, {
                 method: "PUT",
                 body: form
     
@@ -72,7 +73,7 @@ export default function Configuracao_conta()
                     setDados(copiar => ({
                         ...copiar,
                         flag__alterar__foto: dados.flag__alterar__foto + 1,
-                        foto: `http://localhost:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${dados.flag__alterar__foto + 1}`
+                        foto: `http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}&id1=${dados.flag__alterar__foto + 1}`
                     }))
     
                 } else {
@@ -87,7 +88,8 @@ export default function Configuracao_conta()
 
     function nome()
     {
-        fetch(`http://localhost:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+        fetch(`http://${server}:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+            
             setDados(copiar => ({
                 ...copiar,
                 nome: nome.nome
@@ -106,7 +108,7 @@ export default function Configuracao_conta()
             }))
 
         } else {
-            await fetch(`http://localhost:3000/alterar__nome?id=${localStorage.getItem("id")}&nome=${dados.nome}`, {method: "PUT"}).then(res => res.json()).then(res => {
+            await fetch(`http://${server}:3000/alterar__nome?id=${localStorage.getItem("id")}&nome=${dados.nome}`, {method: "PUT"}).then(res => res.json()).then(res => {
                 
                 setDados(copiar => ({
                     ...copiar,
@@ -135,8 +137,9 @@ export default function Configuracao_conta()
 
     function apagar_conta()
     {
-        fetch(`http://localhost:3000/deletar__conta?id=${localStorage.getItem("id")}`, {method: "DELETE"}).then(res => res.json()).then(res => {
+        fetch(`http://${server}:3000/deletar__conta?id=${localStorage.getItem("id")}`, {method: "DELETE"}).then(res => res.json()).then(res => {
             if (res) {
+                console.log(res)
                 alert("Conta apagada com sucesso!")
                 localStorage.clear()
                 window.location.href = "/"

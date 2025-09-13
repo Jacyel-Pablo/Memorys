@@ -10,62 +10,110 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id                String   @id @default(cuid())
+model Memorys_Usuario {
+  id                String   @id   @unique  @default(cuid())
   foto_de_perfil    String?
   nome              String   @unique
   email             String   @unique
   senha             String
   ativo             Boolean  @default(false)
-  msg               Mensagem[]
-  respostas         Respostas[]
-  seguidores        Seguidores[]
-  seguindo          Seguindo[]
+
+  msg               Memorys_Mensagem[]    @relation("id")
+  mensagem          Memorys_Mensagem[]    @relation("nome")
+  seguidores        Memorys_Seguidores[]
+  seguindo          Memorys_Seguindo[]
+  foto              Memorys_Foto[]
+  videos            Memorys_Video[]
 }
 
-model Mensagem {
-  id                 String   @id @default(cuid())
+model Memorys_Mensagem {
+  id                 String   @id   @unique  @default(cuid())
+  id_usuario         String
   foto_de_perfil     String?
-  nome               String   @unique
+  nome               String
   data_de_publicacao DateTime @default(now())
   texto_da_mensagem  String
-  likes              Int
-  deslikes           Int
 
-  usuario           Usuario  @relation(fields: [nome], references: [nome])
-  respostas         Respostas[]
+  usuario_id        Memorys_Usuario  @relation("id", fields: [id_usuario], references: [id])
+  usuario           Memorys_Usuario  @relation("nome", fields: [nome], references: [nome])
+  foto              Memorys_Foto[]
+  video             Memorys_Video[]
+  comentarios       Memorys_Comentarios[]
+  likes             Memorys_Likes[]
+  deslikes          Memorys_Deslikes[]
 }
 
-model Respostas {
-  id                 String   @id @default(cuid())
+model Memorys_Likes {
+  id                 String           @id   @unique  @default(cuid())
   id_mensagem        String
-  foto_de_perfil     String?
-  nome               String   @unique
-  data_de_publicacao DateTime @default(now())
+  id_usuario         String
+
+  mensagem           Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
+}
+
+model Memorys_Deslikes {
+  id                 String           @id   @unique  @default(cuid())
+  id_mensagem        String
+  id_usuario         String
+
+  mensagem           Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
+}
+
+model Memorys_Foto{
+  id                 String                  @id   @unique  @default(cuid())
+  id_mensagem        String
+  fotos              String
+  nome_user          String
+  
+  mensagem           Memorys_Mensagem        @relation(fields: [id_mensagem], references: [id])
+  usuario            Memorys_Usuario @relation(fields: [nome_user], references: [nome])
+}
+
+model Memorys_Video{
+  id                 String                  @id   @unique  @default(cuid())
+  id_mensagem        String
+  videos             String
+  nome_user          String
+
+  mensagem           Memorys_Mensagem        @relation(fields: [id_mensagem], references: [id])
+  usuario            Memorys_Usuario @relation(fields: [nome_user], references: [nome])
+}
+
+model Memorys_Comentarios {
+  id                 String          @id   @unique  @default(cuid())
+  id_mensagem        String
+  email_do_usuário   String
   texto_da_mensagem  String
-  likes              Int
-  deslikes           Int
 
-  usuario           Usuario  @relation(fields: [nome], references: [nome])
-  id_msg            Mensagem @relation(fields: [id_mensagem], references: [id])
+  id_msg            Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
+  resposta          Memorys_Resposta_comentario[]
 }
 
-model Seguidores {
-  id                 String   @id @default(cuid())
+model Memorys_Resposta_comentario {
+  id                 String             @id   @unique  @default(cuid())
+  id_comentario      String
+  email_do_usuário   String
+  texto_da_mensagem  String
+
+  comentarios        Memorys_Comentarios @relation(fields: [id_comentario], references: [id])
+}
+
+model Memorys_Seguidores {
+  id                 String   @id   @unique  @default(cuid())
   userid             String
   foto_de_perfil     String?
   nome               String
   data               DateTime @default(now())
 
-  usuario            Usuario  @relation(fields: [userid], references: [id])
+  usuario            Memorys_Usuario  @relation(fields: [userid], references: [id])
 }
 
-model Seguindo {
-  id                 String   @id @default(cuid())
+model Memorys_Seguindo {
+  id                 String   @id   @unique  @default(cuid())
   userid             String
   foto_de_perfil     String?
   nome               String
   data               DateTime @default(now())
 
-  usuario            Usuario  @relation(fields: [userid], references: [id])
+  usuario            Memorys_Usuario  @relation(fields: [userid], references: [id])
 }
