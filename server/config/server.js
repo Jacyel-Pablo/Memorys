@@ -69,7 +69,7 @@ app.post("/criar__conta",
             }
         })
 
-        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em http://localhost:5173/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="http://localhost:5173/ativar__conta?id=${dados.id}">click aqui</p>`)
+        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em https://memorys.onrender.com/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="https://memorys.onrender.com/ativar__conta?id=${dados.id}">click aqui</p>`)
 
         res.status(201).send(true)
 
