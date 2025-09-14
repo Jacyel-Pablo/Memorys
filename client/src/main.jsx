@@ -28,7 +28,7 @@ function Protecao__telas()
   if (testes === false) {
     const [telas, setTelas] = useState(<></>)
 
-    fetch(`http://${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
+    fetch(`https://${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
       if (dados === true) {
         setTelas(protecao[window.location.pathname])
         
