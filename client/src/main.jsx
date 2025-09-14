@@ -12,7 +12,7 @@ import './index.css'
 import App from './App.jsx'
 
 // Coloque aqui a porta do servidor e no arquivo server.js ultima linha
-const port_server = "localhost"
+const port_server = "https://memorys-backend.onrender.com/"
 
 const protecao = {
   "/home": <Home server={port_server}/>,
