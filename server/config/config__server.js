@@ -24,31 +24,37 @@ export async function verificar_token(token)
 export function enviar_email(destino, titulo, texto, html)
 {
     try {
-        nodemailer.createTestAccount((err, account) => {
+        // nodemailer.createTestAccount((err, account) => {
             let transporter = nodemailer.createTransport({
-                host: 'smtp.ethereal.email',
-                port: 587,
+                // host: 'smtp.ethereal.email',
+                // port: 587,
+                service: 'gmail',
                 secure: false,
+                // auth: {
+                //     user: account.user,
+                //     pass: account.pass
+                // }
                 auth: {
-                    user: account.user,
-                    pass: account.pass
+                    user: process.env.EMAIL,
+                    pass: process.env.SENHA
                 }
             });
 
             async function main() {
                 const info = await transporter.sendMail({
-                  from: '"Memorys" <memorys@ethereal.email>',
+                //   from: '"Memorys" <memorys@ethereal.email>',
+                  from: "memorys224@gmail.com",
                   to: destino,
                   subject: titulo,
                   text: texto,
                   html: html,
                 });
               
-                console.log(nodemailer.getTestMessageUrl(info));
+                // console.log(nodemailer.getTestMessageUrl(info));
             }
               
             main().catch(console.error);
-        });
+        // });
 
         return true
 
