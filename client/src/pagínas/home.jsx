@@ -140,12 +140,15 @@ export default function Home(props)
         form.append("id", localStorage.getItem("id"))
         form.append("texto", e.target[0].value)
 
-        for (let i = 0; i < e.target[2].files.length; i++) {
-            form.append("fotos", e.target[2].files[i])
-        }
+        // Desativando fotos e videos
+        if (e.target[2].files != null) {
+            for (let i = 0; i < e.target[2].files.length; i++) {
+                form.append("fotos", e.target[2].files[i])
+            }
 
-        for (let i = 0; i < e.target[3].files.length; i++) {
-            form.append("videos", e.target[3].files[i])
+            for (let i = 0; i < e.target[3].files.length; i++) {
+                form.append("videos", e.target[3].files[i])
+            }
         }
 
         // form.append("videos", e.target[3].files)
