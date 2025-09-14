@@ -103,10 +103,10 @@ export default function Home(props)
 
         if (e.key === "Enter") {
 
-            fetch(`http://${server}:3000/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`https://${server}/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
                 let lista_html = []
             
-                fetch(`http://${server}:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+                fetch(`https://${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
 
                     for (let i = 0; i < dados1.length; i++) {
 
@@ -150,13 +150,13 @@ export default function Home(props)
 
         // form.append("videos", e.target[3].files)
 
-        const res = await fetch(`http://${server}:3000/enviar__mensagem`, {
+        const res = await fetch(`https://${server}/enviar__mensagem`, {
             method: "POST",
             body: form
 
         })
 
-        fetch(`http://${server}:3000/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+        fetch(`https://${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
             if (res.status === 201) {
 
                 res.json().then(res => {
@@ -262,7 +262,7 @@ export default function Home(props)
     {
         e.preventDefault()
 
-        await fetch(`http://${server}:3000/enviar_comentarios`, {
+        await fetch(`https://${server}/enviar_comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -297,7 +297,7 @@ export default function Home(props)
             "id_user": localStorage.getItem("id")
         }
 
-        fetch(`http://${server}:3000/deletar__mensagem`, {
+        fetch(`https://${server}/deletar__mensagem`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -593,7 +593,6 @@ export default function Home(props)
         
             case "responde":
                 let dados_botao_responde = infor.split(" ")
-                console.log(dados_botao_responde, e)
                 let input_mensagem = e.target[dados_botao_responde[1] - 3]
                 let botao_enviar_mensagem = e.target[dados_botao_responde[1] - 2]
                 let botao_cancelar = e.target[dados_botao_responde[1] - 1]
@@ -648,7 +647,7 @@ export default function Home(props)
     useEffect(() => {
 
         if (parametos.length === 1) {
-            fetch(`http://${server}:3000/pegar__mensagens?id_user=${localStorage.getItem("id")}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`https://${server}/pegar__mensagens?id_user=${localStorage.getItem("id")}`).then(dados1 => dados1.json()).then(dados1 => {
             
                 if (dados.flag == 0) {
                     let index = -1
@@ -656,7 +655,7 @@ export default function Home(props)
                     for (let i = 0; i < dados1.length; i++) {
     
                         // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${dados1[i].id}`).then(arquivos => arquivos.json().then(arquivos => {             
-                            fetch(`http://${server}:3000/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
+                            fetch(`https://${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
                                 index += 1
         
                                 contado += 1
@@ -736,11 +735,11 @@ export default function Home(props)
 
         } else {
 
-            fetch(`http://${server}:3000/pegar__mensagens__compartilhada?id_user=${localStorage.getItem("id")}&id_msg=${parametos[1]}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`https://${server}/pegar__mensagens__compartilhada?id_user=${localStorage.getItem("id")}&id_msg=${parametos[1]}`).then(dados1 => dados1.json()).then(dados1 => {
             
                 if (dados.flag == 0) {    
                     // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${parametos[1]}`).then(arquivos => arquivos.json().then(arquivos => {             
-                        fetch(`http://${server}:3000/pegar_comentarios?id_msg=${dados1[0].id}`).then(comentarios => comentarios.json()).then(comentarios => {
+                        fetch(`https://${server}/pegar_comentarios?id_msg=${dados1[0].id}`).then(comentarios => comentarios.json()).then(comentarios => {
                             
                             let index = 0
 

@@ -14,7 +14,7 @@ export default function Perfil__user(props)
                     <div></div>
 
                     <a href="/perfil">
-                        <img className="foto_perfil" src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                        <img className="foto_perfil" src={`https://${server}/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                     </a>
                 </nav>
 
@@ -23,7 +23,7 @@ export default function Perfil__user(props)
                     <div className={estilo.container__infor}>
                         <div className={estilo.container__infor__parte1}>
                             <div>
-                                <img className={estilo.container__infor__foto} src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                                <img className={estilo.container__infor__foto} src={`https://${server}/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
 
                                 <div className={estilo.like__deslike}>
                                     <div className={estilo.like}>

@@ -34,7 +34,7 @@ export default function Criar_conta(props)
             formData.append("senha", dados.senha)
     
             try {
-                await fetch(`http://${server}:3000/criar__conta`, {
+                await fetch(`https://${server}/criar__conta`, {
                     method: "POST",
                     // headers: {
                     //     "Content-Type": "application/json",

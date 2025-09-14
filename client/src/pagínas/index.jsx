@@ -33,7 +33,7 @@ export default function Index(props)
             alert("Os campos precisam ter pelo menos 3 caracteres")
 
         } else {
-            fetch(`http://${server}:3000/login?email=${dados.email}&senha=${dados.senha}`).then(resposta => resposta.json()).then(resposta => {
+            fetch(`https://${server}/login?email=${dados.email}&senha=${dados.senha}`).then(resposta => resposta.json()).then(resposta => {
                 if (resposta[0] === true) {
                     localStorage.setItem("token", resposta[1])
                     localStorage.setItem("id", resposta[2])
