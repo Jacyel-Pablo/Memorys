@@ -9,7 +9,7 @@ export default function Ativar__conta(props)
     useEffect(() => {
         const id = new URLSearchParams(window.location.search).get("id")
 
-        fetch(`https://${server}/ativar__conta?id=${id}`, {
+        fetch(`${server}/ativar__conta?id=${id}`, {
             method: "PUT"
         }).then(resposta => resposta.json()).then(resposta => {
             if (resposta === true) {

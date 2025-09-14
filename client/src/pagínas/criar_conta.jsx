@@ -26,15 +26,17 @@ export default function Criar_conta(props)
             const formData = new FormData()
             formData.append("foto", dados.foto)
             formData.append("nome", dados.nome)
+
             setDados(copiar => ({
                 ...copiar,
                 email: dados.email.toLowerCase()
             }))
+
             formData.append("email", dados.email)
             formData.append("senha", dados.senha)
     
             try {
-                await fetch(`https://${server}/criar__conta`, {
+                await fetch(`${server}/criar__conta`, {
                     method: "POST",
                     // headers: {
                     //     "Content-Type": "application/json",
@@ -81,7 +83,8 @@ export default function Criar_conta(props)
                 <h1 className={estilos.container__titulo}>Criar conta</h1>
 
                 <p className={estilos.container__textos}>Foto de perfil:</p>
-                <input className={estilos.container__escolher__arquivo} type="file" onChange={(e) => save_data(e)} name="foto" />
+                <input className={estilos.container__escolher__arquivo} style={{width: "20%"}} type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} name="foto" value="Escolher arquivo" />
+                {/* <input className={estilos.container__escolher__arquivo} type="file" onChange={(e) => save_data(e)} name="foto" /> */}
 
                 <p className={estilos.container__textos}>Nome de usuário:</p>
                 <input className={estilos.container__campos} type="text" onChange={(e) => save_data(e)} name="nome" placeholder="Insira um nome de usuário:" />

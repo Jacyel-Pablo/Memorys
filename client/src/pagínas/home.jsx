@@ -103,10 +103,10 @@ export default function Home(props)
 
         if (e.key === "Enter") {
 
-            fetch(`https://${server}/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`${server}/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
                 let lista_html = []
             
-                fetch(`https://${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+                fetch(`${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
 
                     for (let i = 0; i < dados1.length; i++) {
 
@@ -150,13 +150,13 @@ export default function Home(props)
 
         // form.append("videos", e.target[3].files)
 
-        const res = await fetch(`https://${server}/enviar__mensagem`, {
+        const res = await fetch(`${server}/enviar__mensagem`, {
             method: "POST",
             body: form
 
         })
 
-        fetch(`https://${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
+        fetch(`${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
             if (res.status === 201) {
 
                 res.json().then(res => {
@@ -262,7 +262,7 @@ export default function Home(props)
     {
         e.preventDefault()
 
-        await fetch(`https://${server}/enviar_comentarios`, {
+        await fetch(`${server}/enviar_comentarios`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -297,7 +297,7 @@ export default function Home(props)
             "id_user": localStorage.getItem("id")
         }
 
-        fetch(`https://${server}/deletar__mensagem`, {
+        fetch(`${server}/deletar__mensagem`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -305,7 +305,6 @@ export default function Home(props)
             body: JSON.stringify(dados_msg)
 
         }).then(dados1 => dados1.json()).then(dados1 => {
-            console.log(dados1)
             switch (dados1) {
                 case true:
                     location.href = "/home"
@@ -494,7 +493,7 @@ export default function Home(props)
 
                 switch (like_deslike) {
                     case "like":
-                        fetch(`http://${server}:3000/curtir__mensagem`, {
+                        fetch(`${server}/curtir__mensagem`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
@@ -529,8 +528,7 @@ export default function Home(props)
                         break
             
                     case "deslike":
-            
-                        fetch(`http://${server}:3000/nao__gostei__mensagem`, {
+                        fetch(`${server}/nao__gostei__mensagem`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
@@ -647,7 +645,7 @@ export default function Home(props)
     useEffect(() => {
 
         if (parametos.length === 1) {
-            fetch(`https://${server}/pegar__mensagens?id_user=${localStorage.getItem("id")}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`${server}/pegar__mensagens?id_user=${localStorage.getItem("id")}`).then(dados1 => dados1.json()).then(dados1 => {
             
                 if (dados.flag == 0) {
                     let index = -1
@@ -655,7 +653,7 @@ export default function Home(props)
                     for (let i = 0; i < dados1.length; i++) {
     
                         // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${dados1[i].id}`).then(arquivos => arquivos.json().then(arquivos => {             
-                            fetch(`https://${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
+                            fetch(`${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
                                 index += 1
         
                                 contado += 1
@@ -735,11 +733,11 @@ export default function Home(props)
 
         } else {
 
-            fetch(`https://${server}/pegar__mensagens__compartilhada?id_user=${localStorage.getItem("id")}&id_msg=${parametos[1]}`).then(dados1 => dados1.json()).then(dados1 => {
+            fetch(`${server}/pegar__mensagens__compartilhada?id_user=${localStorage.getItem("id")}&id_msg=${parametos[1]}`).then(dados1 => dados1.json()).then(dados1 => {
             
                 if (dados.flag == 0) {    
                     // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${parametos[1]}`).then(arquivos => arquivos.json().then(arquivos => {             
-                        fetch(`https://${server}/pegar_comentarios?id_msg=${dados1[0].id}`).then(comentarios => comentarios.json()).then(comentarios => {
+                        fetch(`${server}/pegar_comentarios?id_msg=${dados1[0].id}`).then(comentarios => comentarios.json()).then(comentarios => {
                             
                             let index = 0
 
@@ -836,7 +834,7 @@ export default function Home(props)
 
                 <div className={estilos.container__compartilhar__mensagem__corpo}>
                     <button onClick={() => {
-                        copy(`http://localhost:5173/home?msg=${dados.id_mensagem}`)
+                        copy(`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`)
                         alert("Link da mensagem copiado")
                         }} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         
@@ -844,17 +842,17 @@ export default function Home(props)
                         <p>Copiar link</p>
                     </button>
 
-                    <WhatsappShareButton url={`http://localhost:5173/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
+                    <WhatsappShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         <WhatsappIcon />
                         <p>Whatsapp</p>
                     </WhatsappShareButton>
 
-                    <TwitterShareButton url={`http://localhost:5173/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
+                    <TwitterShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         <XIcon/>
                         <p>X</p>
                     </TwitterShareButton>
 
-                    <EmailShareButton url={`http://localhost:5173/home?msg=${dados.id_mensagem}`} className={`${estilos.compartilhar__botao__com__icone__das__redes__sociais} ${estilos.compartilhar__botao__com__icone__das__redes__sociais__email}`}>
+                    <EmailShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={`${estilos.compartilhar__botao__com__icone__das__redes__sociais} ${estilos.compartilhar__botao__com__icone__das__redes__sociais__email}`}>
                         <EmailIcon/>
                         <p>Email</p>
                     </EmailShareButton>
@@ -887,7 +885,7 @@ export default function Home(props)
                 <input tabIndex={0} id="nome" onChange={(e) => pegar_dados(e)} onKeyDown={(e) => procurar_usuario(e)} className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src={`http://${server}:3000/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                    <img className="foto_perfil" src={`${server}/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                 </a>
             </nav>
 
@@ -924,15 +922,17 @@ export default function Home(props)
 
                                     <img className={estilos.container__box__foto__name} src={fotos} alt="Icone de fotos" />
                                 
-                                    <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/>
+                                    <input type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} style={{height: "60%", width: "15%", marginLeft: "-15%", opacity: "0"}} />
+                                    {/* <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/> */}
 
                                 </div>
 
                                 <div className={estilos.container__box__foto}>
 
                                     <img className={estilos.container__box__foto__name} src={video} alt="Icone de fotos" />
-                                
-                                    <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/>
+
+                                    <input type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} style={{height: "60%", width: "15%", marginLeft: "-15%", opacity: "0"}} />                                
+                                    {/* <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/> */}
                                 
                                 </div>
                             </div>
@@ -949,7 +949,11 @@ export default function Home(props)
                                 {/* Foto de perfil */}
                                 <div className={estilos.container__mensagem__cabecalho__foto}>
                                     <a href="/">
-                                        <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                        {mensagem[0][index]["foto_de_perfil"] === null ? 
+                                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={foto__default} alt="Foto de perfil" />
+                                        :
+                                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                        }
                                     </a>
                                 </div>
         
@@ -1066,7 +1070,11 @@ export default function Home(props)
                                                     {/* Foto de perfil */}
                                                     <a href="/">
                                                         {/* <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" /> */}
-                                                        <img className={estilos.comentario__box__foto} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                        {mensagem[0][index]["foto_de_perfil"] === null ?
+                                                            <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
+                                                        :
+                                                            <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                        }
                                                     </a>
                             
                                                     {/* Nome do usuário */}
@@ -1121,7 +1129,11 @@ export default function Home(props)
 
                                                             {/* Foto de perfil */}
                                                             <a href="/">
-                                                                <img className={estilos.comentario__box__foto} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                                {mensagem[0][index]["foto_de_perfil"] === null ? 
+                                                                    <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
+                                                                :
+                                                                    <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                                }
                                                             </a>
                                     
                                                             {/* Nome do usuário */}

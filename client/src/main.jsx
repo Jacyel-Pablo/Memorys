@@ -12,7 +12,7 @@ import './index.css'
 import App from './App.jsx'
 
 // Coloque aqui a porta do servidor e no arquivo server.js ultima linha
-const port_server = "memorys-backend.onrender.com"
+const port_server = "https://memorys-backend.onrender.com"
 
 const protecao = {
   "/home": <Home server={port_server}/>,
@@ -28,7 +28,7 @@ function Protecao__telas()
   if (testes === false) {
     const [telas, setTelas] = useState(<></>)
 
-    fetch(`https://${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
+    fetch(`${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
       if (dados === true) {
         setTelas(protecao[window.location.pathname])
         

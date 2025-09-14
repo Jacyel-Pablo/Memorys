@@ -12,7 +12,7 @@ export default function Ver_seguidores(props)
                 <input className="buscar" type="search" />
                 
                 <a href="/perfil">
-                    <img className="foto_perfil" src={`https://${server}/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
+                    <img className="foto_perfil" src={`${server}/pegar__foto?id=${localStorage.getItem("id")}`} alt="Foto de perfil" />
                 </a>
             </nav>
 
