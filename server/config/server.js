@@ -837,7 +837,7 @@ app.get("/encontrar__usuario",
     nome += "%"
 
     try {
-        const user_names = await prisma.$queryRaw`SELECT id, foto_de_perfil, nome FROM Memorys_Usuario WHERE LOWER(nome) LIKE LOWER(${nome}) AND ativo LIKE true`
+        const user_names = await prisma.$queryRaw`SELECT id, foto_de_perfil, nome FROM 'Memorys_Usuario' WHERE LOWER(nome) LIKE LOWER(${nome}) AND ativo LIKE true`
 
         res.status(200).send(user_names)
 
