@@ -7,11 +7,13 @@
 .container{
     height: 75%;
     width: 50%;
-    border: 2px solid;
+    border-radius: 2em;
+    box-shadow: 2px 1.5px 3px 1.5px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
 }
 .container__titulo{
     font-size: 260%;
-    margin: 20px 0px;
+    margin: 3vh 0px;
     text-align: center;
 }
 .container__textos{
@@ -72,7 +74,6 @@
 @media only screen and (max-width: 900px) {
     .container{
         width: 100%;
-        border: 2px solid;
     }
     .container__titulo{
         font-size: 260%;

@@ -189,13 +189,15 @@ export default function Configuracao_conta(props)
 
                         <img className={estilos.container1__foto__perfil} src={dados.foto} alt="Foto de perfil" />
                         
-                        <div className={estilos.container1__editar__foto}>
-                            <img className={estilos.container1__editar__foto__lapis} src={lapis} alt="Editar foto" />
+                        {props.upload === true ?
+                            <div className={estilos.container1__editar__foto}>
+                                <img className={estilos.container1__editar__foto__lapis} src={lapis} alt="Editar foto" />
 
-                            <input onChange={() => alert("Essa opção foi desativada pelo dev")} style={{"height": `${dados.input__file__h_w}%`, "width": `${dados.input__file__h_w}%`}} className={estilos.container1__editar__foto__file} type="button" name="foto" />
-
-                            {/* <input onChange={(e) => alterar__foto(e)} style={{"height": `${dados.input__file__h_w}%`, "width": `${dados.input__file__h_w}%`}} className={estilos.container1__editar__foto__file} type="file" name="foto" /> */}
-                        </div>
+                                <input onChange={(e) => alterar__foto(e)} style={{"height": `${dados.input__file__h_w}%`, "width": `${dados.input__file__h_w}%`}} className={estilos.container1__editar__foto__file} type="file" name="foto" />
+                            </div>
+                        :
+                            <></>
+                        }
 
                         {/* Campo do nome do usuário */}
 

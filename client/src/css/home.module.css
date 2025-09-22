@@ -33,6 +33,7 @@
     color: black;
     display: block;
     border: 2px solid;
+    border-radius: 2em;
 }
 .perfil:hover{
     color: black;
@@ -41,6 +42,7 @@
     height: 100%;
     width: 100%;
     display: grid;
+    border-radius: 2em;
     place-items: center;
     grid-template-columns: 38% 62%;
 }
@@ -63,6 +65,8 @@
     width: 100%;
     font-size: 220%;
     border: 1.5px solid;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
     border-bottom: 0px solid;
     padding-left: 3%;
     padding-top: 3%;
@@ -84,6 +88,8 @@
     height: 20%;
     border: 2px solid;
     border-top: 0px solid;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
     display: grid;
     grid-template-columns: 50% 50%;
 }
@@ -108,13 +114,16 @@
 /* Mensagem */
 
 .container__mensagem{
-    margin-top: 10%;
+    margin-top: 7%;
     height: auto;
+    border-radius: 2em;
 }
 .container__mensagem__cabecalho{
     height: 9vh;
     border: 2px solid;
     border-bottom: 0px solid;
+    border-top-left-radius: 2em;
+    border-top-right-radius: 2em;
     display: grid;
     grid-template-columns: 18% 50.7% 15.65% 15.65%;
 }
@@ -193,29 +202,35 @@
 .container__mensagem__avaliacao{
     height: 6vh;
     border: 2px solid;
+    border-bottom-left-radius: 2em;
+    border-bottom-right-radius: 2em;
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
 }
 .container__mensagem__avaliacao__like__deslike{
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0);
+    width: 50%;
     font-size: 120%;
+    margin-left: -15%;
     border: 0px solid;
-    border-right: 2px solid;
-}
-.container__mensagem__avaliacao__like__deslike__selecionado{
-    border: 0px solid;
-    background-color: blue;
-    color: white;
-    font-size: 120%;
-    border-right: 2px solid;
-    border-color: black;
+    border-bottom-left-radius: 2em;
 }
 .container__mensagem__avaliacao__compartilhar{
     height: 30px;
     width: 30px;
 }
+.botao__avaliacao__div{
+    width: 100%;
+    border-right: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.botao__avaliacao{
+    width: 18%;
+}
 .found{
-    height: 30%;
+    height: 18vh;
     width: 95%;
     color: black;
     margin-top: 5%;
@@ -235,7 +250,7 @@
 }
 .found__imagem{
     border-radius: 10em;
-    width: 70%;
+    width: 50%;
 }
 .container__comentario__botao{
     border-left: 0px;
@@ -445,9 +460,6 @@
     color: white;
     border: 0px solid;
 }
-.comentario__box__submit__responde__desativo{
-
-}
 .comentario__box__submit__ver__respostas__ativo{
     width: 30%;
     margin-left: 0px;
@@ -469,6 +481,8 @@
 .box__comentarios__ativo{
     height: 70dvh;
     border: 2px solid;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
     border-top: 0px solid;
     font-size: 120%;
 }
@@ -502,6 +516,7 @@
 .enviar__comentario__botao__ativo{
     height: 90%;
     width: 90%;
+    margin-right: 15%;
     font-size: 110%;
     border: 0px solid;
     color: white;
@@ -593,6 +608,12 @@
         background-color: var(--cor-azul);
         font-size: 130%;
     }
+    .enviar__comentario__input__ativo{
+        font-size: 70%;
+    }
+    .enviar__comentario__botao__ativo{
+        font-size: 80%;
+    }
     .container__box{
         height: 20%;
         border: 2px solid;
@@ -605,6 +626,7 @@
         align-items: center;
         justify-content: center;
         border-right: 2px solid;
+        font-size: 80%;
     }
     .container__box__foto__name{
         height: 46px;
@@ -667,7 +689,7 @@
     .container__mensagem__avaliacao__like__deslike{
         height: 100%;
         width: 100%;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0);
         font-size: 120%;
         border: 0px solid;
         border-right: 2px solid;
@@ -675,6 +697,10 @@
     .container__mensagem__avaliacao__compartilhar{
         height: 30px;
         width: 30px;
+    }
+    .botao__avaliacao{
+        width: 25%;
+        margin-left: 15%;
     }
     .found{
         height: 20%;

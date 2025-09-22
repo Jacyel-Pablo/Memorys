@@ -118,7 +118,13 @@ CREATE UNIQUE INDEX "Memorys_Mensagem_id_key" ON "Memorys_Mensagem"("id");
 CREATE UNIQUE INDEX "Memorys_Likes_id_key" ON "Memorys_Likes"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Memorys_Likes_id_usuario_key" ON "Memorys_Likes"("id_usuario");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Memorys_Deslikes_id_key" ON "Memorys_Deslikes"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Memorys_Deslikes_id_usuario_key" ON "Memorys_Deslikes"("id_usuario");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Memorys_Foto_id_key" ON "Memorys_Foto"("id");

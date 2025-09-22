@@ -4,6 +4,10 @@ import fotos from "../assets/foto icone.png"
 import video from "../assets/video icone.png"
 import compartilhar from "../assets/compartilhar icone.png"
 import foto__default from "../assets/Default.png"
+import botao_like from "../assets/botão like.png"
+import botao_like_selecionado from "../assets/botão like selecionado.png"
+import botao_deslike from "../assets/botão deslike.png"
+import botao_deslike_selecionado from "../assets/botão deslike selecionado.png"
 import { WhatsappIcon, WhatsappShareButton, XIcon, TwitterShareButton, EmailIcon, EmailShareButton } from "react-share"
 import copy from "copy-to-clipboard"
 import copiar_link from "./source/Copiar link.png"
@@ -13,12 +17,16 @@ export default function Home(props)
 {
     const [ dados, setDados ] = useState({
         envio__mensagens: [],
+        buscar__usuarios: [],
         nome: "",
         texto: "",
         // Flag para entedi o bug de duplicação de mensagens
         flag: 0,
         // lista de informações de mensagens
         msg_infor: [],
+
+        // Ativar a parte de buscar usuários e desativar a parte de enviar mensagens
+        parte_buscar_usuarios: false,
 
         // Flag de atualização das avaliações das mensagens
         avaliacao: [false, "like"],
@@ -104,27 +112,15 @@ export default function Home(props)
         if (e.key === "Enter") {
 
             fetch(`${server}/encontrar__usuario?nome=${dados.nome}`).then(dados1 => dados1.json()).then(dados1 => {
-                let lista_html = []
             
                 fetch(`${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(nome => {
 
-                    for (let i = 0; i < dados1.length; i++) {
-
-                        if (dados1[i].nome != nome.nome) {
-                            lista_html.push(
-                                <a key={i} className={estilos.found} href="#">
-                                    <img className={estilos.found__imagem} src={`http://${server}:3000/pegar__fotos__perfil?link=${dados1[i].foto_de_perfil}`} alt="Foto de perfil" />
-        
-                                    <h1 className={estilos.found__nomes}>{dados1[i].nome}</h1>
-                                </a>
-                            )
-                        }
-
-                    }
+                    localStorage.setItem("nome", nome.nome)
 
                     setDados(copiar => ({
                         ...copiar,
-                        envio__mensagens: lista_html 
+                        buscar__usuarios: dados1,
+                        parte_buscar_usuarios: true,
                     }))
                 })
 
@@ -141,17 +137,19 @@ export default function Home(props)
         form.append("texto", e.target[0].value)
 
         // Desativando fotos e videos
-        if (e.target[2].files != null) {
-            for (let i = 0; i < e.target[2].files.length; i++) {
-                form.append("fotos", e.target[2].files[i])
+        if (props.upload === true) {
+            if (e.target[2].files != null) {
+                for (let i = 0; i < e.target[2].files.length; i++) {
+                    form.append("fotos", e.target[2].files[i])
+                }
+
+                for (let i = 0; i < e.target[3].files.length; i++) {
+                    form.append("videos", e.target[3].files[i])
+                }
             }
 
-            for (let i = 0; i < e.target[3].files.length; i++) {
-                form.append("videos", e.target[3].files[i])
-            }
+            form.append("videos", e.target[3].files)
         }
-
-        // form.append("videos", e.target[3].files)
 
         const res = await fetch(`${server}/enviar__mensagem`, {
             method: "POST",
@@ -163,7 +161,7 @@ export default function Home(props)
             if (res.status === 201) {
 
                 res.json().then(res => {
-                    // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${res[1]}`).then(arquivos => arquivos.json().then(arquivos => {             
+                    fetch(`${server}/pegar__midia__mensagens?id=${res[1]}`).then(arquivos => arquivos.json()).then(arquivos => {             
 
                         let data = new Date().toISOString()
                         data = data.split("T")
@@ -197,26 +195,34 @@ export default function Home(props)
                         // Fotos das imagens
                         let fotos = []
         
-                        // for (let i = 0; i < arquivos[0]["fotos"].length; i++) {
-                        //     fotos.push(<img key={i} onClick={() => {
+                        switch (props.upload) {
+                            case true:
+                                for (let i = 0; i < arquivos[0]["fotos"].length; i++) {
+                                    fotos.push(<img key={i} onClick={() => {
 
-                        //         flag_foto = true
-                        //         caminho_foto = `http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`
+                                        flag_foto = true
+                                        caminho_foto = `${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`
 
-                        //         abrir_janela_apagar_mensagem()
+                                        abrir_janela_apagar_mensagem()
 
-                        //     }} className={estilos.foto__mensagem} src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`}/>)
-                        // }
+                                    }} className={estilos.foto__mensagem} src={`${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`}/>)
+                                }
+                                break
+                        }
 
                         let videos = []
 
-                        // for (let k = 0; k < arquivos[1]["videos"].length; k++) {
-                        //     videos.push(
-                        //         <video key={k} className={estilos.videos__mensagem} controls>
-                        //             <source src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][k]}`}/>
-                        //         </video>
-                        //     )
-                        // }
+                        switch (props.upload) {
+                            case true:
+                                for (let k = 0; k < arquivos[1]["videos"].length; k++) {
+                                    videos.push(
+                                        <video key={k} className={estilos.videos__mensagem} controls>
+                                            <source src={`${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][k]}`}/>
+                                        </video>
+                                    )
+                                }
+                                break
+                        }
 
                         let msg = [...dados.msg_infor]
 
@@ -250,7 +256,7 @@ export default function Home(props)
                         e.target.reset()
     
                     })
-                // })
+                })
     
             } else {
                 alert("Ocorreu um erro ao enviar sua mensagem\nTente novamente")
@@ -412,55 +418,53 @@ export default function Home(props)
     }
 
     // Função para dar like e deslike em uma mensagem
-    async function like(e, infor) {
+    async function configuracao(e, infor) {
         e.preventDefault()
         
         switch (flag_comentarios) {
             // Caso a flag comentarios seja false e para adicionar like se a flag for true abre os comentarios
             case false:
                 const input_like = e.target[0]
+
                 const input_deslike = e.target[1]
 
                 const id_msg = input_like.id.split(",")
 
                 let dados_msg_infor_copy = dados.msg_infor
 
-                function select_botao(elemento, numero)
+                function select_botao(elemento, valor)
                 {
                     // O index index_msg e o index da mensagem
                     let index_msg = elemento.id.split(",")[elemento.id.split(",").length - 1]
 
                     // Essa e uma lista com as informações do elemento
                     let lista_elemento = dados.msg_infor
-
-                    if (elemento.value.split(": ")[0] === "Like") {
-                        lista_elemento[index_msg][0][index_msg]["likes"] += 1
+                    
+                    if (like_deslike === "like") {
+                        lista_elemento[index_msg][0][index_msg]["likes"] = valor
                         lista_elemento[index_msg][0][index_msg]["likes_user"] = true
 
+                        e.target.children[0].children[0].children[0]["src"] = botao_like_selecionado
+
                         setDados(copiar => ({
                             ...copiar,
                             msg_infor: lista_elemento
                         }))
 
                     } else {
-                        lista_elemento[index_msg][0][index_msg]["deslikes"] += 1
+                        lista_elemento[index_msg][0][index_msg]["deslikes"] = valor
                         lista_elemento[index_msg][0][index_msg]["deslikes_user"] = true
+
+                        e.target.children[0].children[1].children[0]["src"] = botao_deslike_selecionado
 
                         setDados(copiar => ({
                             ...copiar,
                             msg_infor: lista_elemento
                         }))
                     }
-
-                    elemento.border = "0px solid"
-                    elemento.style.backgroundColor = "blue"
-                    elemento.style.color = "white"
-                    elemento.style.fontSize = "120%"
-                    elemento.style.borderRight = "2px solid"
-                    elemento.style.borderColor = "black"
                 }
 
-                function deselect_botao(elemento, numero)
+                function deselect_botao(elemento, valor)
                 {
                     // O index index_msg e o index da mensagem
                     let index_msg = elemento.id.split(",")[elemento.id.split(",").length - 1]
@@ -468,9 +472,11 @@ export default function Home(props)
                     // Essa e uma lista com as informações do elemento
                     let lista_elemento = dados.msg_infor
 
-                    if (elemento.value.split(": ")[0] === "Like") {
-                        lista_elemento[index_msg][0][index_msg]["likes"] -= 1
+                    if (like_deslike === "like") {
+                        lista_elemento[index_msg][0][index_msg]["likes"] = valor
                         lista_elemento[index_msg][0][index_msg]["likes_user"] = false
+
+                        e.target.children[0].children[0].children[0]["src"] = botao_like
 
                         setDados(copiar => ({
                             ...copiar,
@@ -478,20 +484,16 @@ export default function Home(props)
                         }))
 
                     } else {
-                        lista_elemento[index_msg][0][index_msg]["deslikes"] -= 1
+                        lista_elemento[index_msg][0][index_msg]["deslikes"] = valor
                         lista_elemento[index_msg][0][index_msg]["deslikes_user"] = false
+
+                        e.target.children[0].children[1].children[0]["src"] = botao_deslike
 
                         setDados(copiar => ({
                             ...copiar,
                             msg_infor: lista_elemento
                         }))
                     }
-
-                    elemento.style.backgroundColor = "white"
-                    elemento.style.fontSize = "120%"
-                    elemento.style.border = "0px solid"
-                    elemento.style.borderRight = "2px solid"
-                    elemento.style.color = "black"
                 }
 
                 switch (like_deslike) {
@@ -513,7 +515,8 @@ export default function Home(props)
                             } else if (dados_msg[0] === true && dados_msg[1] === "deslike") {
                                 // Configuração do like
                                 select_botao(input_like, dados_msg[2])
-            
+                                
+                                like_deslike = "deslike"
                                 // Configuração do deslike
                                 deselect_botao(input_deslike, dados_msg[3])
 
@@ -549,7 +552,8 @@ export default function Home(props)
                             } else if (dados_msg[0] === true && dados_msg[1] === "like") {
                                 // Configuração do deslike
                                 select_botao(input_deslike, dados_msg[2])
-            
+
+                                like_deslike = "like"
                                 // Configuração do like
                                 deselect_botao(input_like, dados_msg[3])
 
@@ -566,6 +570,7 @@ export default function Home(props)
 
                         break
                 }
+
                 break
 
             case true:
@@ -579,12 +584,17 @@ export default function Home(props)
                     div_comentarios.className = estilos.box__comentarios__ativo
                     input_enviar_comentario.className = estilos.enviar__comentario__input__ativo
                     botao_enviar_comentario.className = estilos.enviar__comentario__botao__ativo
+                    e.target.children[0]["style"]["borderBottomRightRadius"] = "0em"
+                    e.target.children[0]["style"]["borderBottomLeftRadius"] = "0em"
+
                     div_comentarios.id = "aberto"
 
                 } else {
                     div_comentarios.className = estilos.box__comentarios__desativo
                     input_enviar_comentario.className = estilos.enviar__comentario__input__desativo
                     botao_enviar_comentario.className = estilos.enviar__comentario__botao__desativo
+                    e.target.children[0]["style"] = ""
+
                     div_comentarios.id = "fechado"
 
                 }
@@ -644,9 +654,16 @@ export default function Home(props)
         }
     }
 
+    function fechar_parte_buscar_usuarios()
+    {
+        setDados({
+            ...dados,
+            parte_buscar_usuarios: false
+        })
+    }
+
     // Pegar as mensagens do banco de dados
     useEffect(() => {
-
         if (parametos.length === 1) {
             fetch(`${server}/pegar__mensagens?id_user=${localStorage.getItem("id")}`).then(dados1 => dados1.json()).then(dados1 => {
             
@@ -655,7 +672,7 @@ export default function Home(props)
     
                     for (let i = 0; i < dados1.length; i++) {
     
-                        // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${dados1[i].id}`).then(arquivos => arquivos.json().then(arquivos => {             
+                        fetch(`${server}/pegar__midia__mensagens?id=${dados1[i].id}`).then(arquivos => arquivos.json().then(arquivos => {             
                             fetch(`${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
                                 index += 1
         
@@ -672,25 +689,34 @@ export default function Home(props)
                                 // Fotos das imagens
                                 let fotos = []
             
-                                // for (let j = 0; j < arquivos[0]["fotos"].length; j++) {
-                                //     fotos.push(
-                                //         <img key={j} onClick={(e) => {
-                                //             flag_foto = true
-                                //             caminho_foto = `http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][j]}`
-        
-                                //             abrir_janela_apagar_mensagem()
-                                //         }} className={estilos.foto__mensagem} src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][j]}`}/>)
-                                // }
+                                switch (props.upload) {
+                                    case true:
+                                        for (let j = 0; j < arquivos[0]["fotos"].length; j++) {
+                                            fotos.push(
+                                                <img key={j} onClick={(e) => {
+                                                    flag_foto = true
+                                                    caminho_foto = `${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][j]}`
+                
+                                                    abrir_janela_apagar_mensagem()
+                                                }} className={estilos.foto__mensagem} src={`${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][j]}`}/>)
+                                        }
+
+                                        break
+                                }
         
                                 let videos = []
         
-                                // for (let k = 0; k < arquivos[1]["videos"].length; k++) {
-                                //     videos.push(
-                                //         <video key={k} className={estilos.videos__mensagem} controls>
-                                //             <source src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][k]}`}/>
-                                //         </video>
-                                //     )
-                                // }
+                                switch (props.upload) {
+                                    case true:
+                                        for (let k = 0; k < arquivos[1]["videos"].length; k++) {
+                                            videos.push(
+                                                <video key={k} className={estilos.videos__mensagem} controls>
+                                                    <source src={`${server}/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][k]}`}/>
+                                                </video>
+                                            )
+                                        }
+                                        break
+                                }
 
                                 lista_mensagens.push(
                                 [
@@ -724,7 +750,7 @@ export default function Home(props)
                                 }  
                             })
         
-                        // }))
+                        }))
                     }
     
                     setDados(copiar => ({
@@ -739,7 +765,7 @@ export default function Home(props)
             fetch(`${server}/pegar__mensagens__compartilhada?id_user=${localStorage.getItem("id")}&id_msg=${parametos[1]}`).then(dados1 => dados1.json()).then(dados1 => {
             
                 if (dados.flag == 0) {    
-                    // fetch(`http://${server}:3000/pegar__midia__mensagens?id=${parametos[1]}`).then(arquivos => arquivos.json().then(arquivos => {             
+                    fetch(`${server}/pegar__midia__mensagens?id=${parametos[1]}`).then(arquivos => arquivos.json().then(arquivos => {             
                         fetch(`${server}/pegar_comentarios?id_msg=${dados1[0].id}`).then(comentarios => comentarios.json()).then(comentarios => {
                             
                             let index = 0
@@ -759,25 +785,33 @@ export default function Home(props)
                             // Fotos das imagens
                             let fotos = []
         
-                            // for (let i = 0; i < arquivos[0]["fotos"].length; i++) {
-                            //     fotos.push(
-                            //         <img key={i} onClick={(e) => {
-                            //             flag_foto = true
-                            //             caminho_foto = `http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`
+                            switch (props.upload) {
+                                case true:
+                                    for (let i = 0; i < arquivos[0]["fotos"].length; i++) {
+                                        fotos.push(
+                                            <img key={i} onClick={(e) => {
+                                                flag_foto = true
+                                                caminho_foto = `http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`
 
-                            //             abrir_janela_apagar_mensagem()
-                            //         }} className={estilos.foto__mensagem} src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`}/>)
-                            // }
+                                                abrir_janela_apagar_mensagem()
+                                            }} className={estilos.foto__mensagem} src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[0]["fotos"][i]}`}/>)
+                                    }
+                                    break
+                            }
 
                             let videos = []
 
-                            // for (let i = 0; i < arquivos[1]["videos"].length; i++) {
-                            //     videos.push(
-                            //         <video key={i} className={estilos.videos__mensagem} controls>
-                            //             <source src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][i]}`}/>
-                            //         </video>
-                            //     )
-                            // }
+                            switch (props.upload) {
+                                case true:
+                                    for (let i = 0; i < arquivos[1]["videos"].length; i++) {
+                                        videos.push(
+                                            <video key={i} className={estilos.videos__mensagem} controls>
+                                                <source src={`http://${server}:3000/pegar__fotos__videos__mensagens?tipo=foto&url=${arquivos[1]["videos"][i]}`}/>
+                                            </video>
+                                        )
+                                    }
+                                    break
+                            }
 
                             lista_mensagens = []
                             
@@ -813,7 +847,7 @@ export default function Home(props)
                             }))
                         })
     
-                    // }))
+                    }))
                 }
             })
         }
@@ -821,9 +855,9 @@ export default function Home(props)
     }, [])
 
     useEffect(() => {
-        console.log(dados.msg_infor)
+        localStorage.removeItem("msg")
 
-    }, [dados.msg_infor])
+    }, [dados])
 
     return (
         <div className="corpo">
@@ -837,7 +871,8 @@ export default function Home(props)
 
                 <div className={estilos.container__compartilhar__mensagem__corpo}>
                     <button onClick={() => {
-                        copy(`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`)
+                        copy(`http://localhost:5173/home?msg=${dados.id_mensagem}`)
+                        // copy(`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`)
                         alert("Link da mensagem copiado")
                         }} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         
@@ -905,271 +940,317 @@ export default function Home(props)
                     </a>
 
                 </div>
+                
+                {/* Parte de envio de mensagens e observar as mensagens do feed ou buscar usuário */}
+                {dados.parte_buscar_usuarios === true ?
+                    <div className={estilos.mensagens}>
+                        <input onClick={() => fechar_parte_buscar_usuarios()} className={estilos.perfil__user__name} style={{backgroundColor: "white", border: "0px", fontSize: "120%", marginTop: "3%", textDecoration: "underline"}} type="button" value="<-- Voltar"/>
 
-                {/* Parte de envio de mensagens e observar as mensagens do feed */}
-                <div className={estilos.mensagens}>
-                    
-                    <>
-                        <p className={`${estilos.mensagens__seguindo} ${estilos.mensagens__seguindo_android}`}>Ver lista de <a href="/">pessoas que você segue completa</a></p>
+                        {dados.buscar__usuarios.map((usuario, index) => (
 
-                        {/* Formulario para enviar as mensagens */}
+                            <div key={index}>
+                                {usuario.nome != localStorage.getItem("nome") ? 
 
-                        <form className={estilos.enviar__mensagens} onSubmit={(e) => enviar_mensagem(e)}>
-
-                            <textarea className={estilos.enviar__mensagens__campor__escrita} id="texto" onChange={(e) => pegar_dados(e)} placeholder="Escreva algo:"></textarea>
-
-                            <input className={estilos.enviar__mensagens__botao} type="submit" value="Enviar" />
-                        
-                            <div className={estilos.container__box}>
-                                <div className={estilos.container__box__foto}>
-
-                                    <img className={estilos.container__box__foto__name} src={fotos} alt="Icone de fotos" />
-                                
-                                    <input type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} style={{height: "60%", width: "15%", marginLeft: "-15%", opacity: "0"}} />
-                                    {/* <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/> */}
-
-                                </div>
-
-                                <div className={estilos.container__box__foto}>
-
-                                    <img className={estilos.container__box__foto__name} src={video} alt="Icone de fotos" />
-
-                                    <input type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} style={{height: "60%", width: "15%", marginLeft: "-15%", opacity: "0"}} />                                
-                                    {/* <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/> */}
-                                
-                                </div>
-                            </div>
-                        </form>
-                    </>
-
-                    {dados.msg_infor.map((mensagem, index) => (
-                        // console.log(mensagem[0][index]["fotos"][0], mensagem[0][index]["fotos"][0].length)
-
-                        <div key={index} className={estilos.container__mensagem}>
-                            {/* Mensagem dos usuários */}
-        
-                            <div className={estilos.container__mensagem__cabecalho}>
-                                {/* Foto de perfil */}
-                                <div className={estilos.container__mensagem__cabecalho__foto}>
-                                    <a href="/">
-                                        {mensagem[0][index]["foto_de_perfil"] === null ? 
-                                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={foto__default} alt="Foto de perfil" />
+                                    <a className={estilos.found} href="#">
+                                        {usuario["foto_de_perfil"] === null ? 
+                                            <img className={estilos.found__imagem} src={foto__default} alt="Foto de perfil" />
                                         :
-                                            <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                            <img className={estilos.found__imagem} src={`${server}/pegar__fotos__perfil?link=${usuario.foto_de_perfil}`} alt="Foto de perfil" />
                                         }
+
+                                        <h1 className={estilos.found__nomes}>{usuario.nome}</h1>
                                     </a>
-                                </div>
-        
-                                {/* Nome do usuário */}
-                                <div className={estilos.container__mensagem__user__name}>
-                                    <p>{mensagem[0][index]["nome"]}</p>
-                                </div>
-        
-                                {/* Data de publicação */}
-                                <div className={estilos.container__mensagem__data}>
-                                    <p>{mensagem[0][index]["data_de_publicacao"]}</p>
-                                </div>
-
-                                {/* botão de excluir a mensagem */}
-                                {mensagem[0][index]["usuario"] ? 
-                                    <input onClick={() => {
-                                        abrir_janela = true,
-
-                                        setDados(copiar => ({
-                                            ...copiar,
-                                            id_mensagem: mensagem[0][index]["id_msg"]
-                                        }))
-
-                                        abrir_janela_apagar_mensagem()
-                                    }} className={estilos.container__mensagem__botao__excluir} type="button" value="X" />
-
-                                    :
-                                    <input onClick={() => {
-                                        abrir_janela = true,
-
-                                        setDados(copiar => ({
-                                            ...copiar,
-                                            id_mensagem: mensagem[0][index]["id_msg"]
-                                        }))
-
-                                        abrir_janela_apagar_mensagem()
-                                    }} className={estilos.container__mensagem__botao__excluir__invisivel} type="button" value="X" />
+                                :
+                                    <div></div>
                                 }
+                            </div>
 
-                            </div>
-        
-                            <div className={estilos.container__mensagem__corpo__msg}>
-                                <div className={estilos.container__mensagem__corpo}>
-                                    <p>{mensagem[0][index]["texto_da_mensagem"]}</p>
-                                </div>
-                            </div>
-        
-                            {/* Area aonde ficar as fotos e vidéos */}
-                            {mensagem[0][index]["fotos"][0].length === 0 && mensagem[0][index]["videos"][0].length === 0 ? 
-                                // if não existir fotos e videos
-                                <div className={estilos.container__foto__mensagem} style={{"height": "2dvh"}}>
-                                    {mensagem[0][index]["fotos"]}
-                                    {mensagem[0][index]["videos"]}
-                                </div>
+                        ))}
+                    </div>
+                :
+                    <div className={estilos.mensagens}>
+                        
+                        <>
+                            <p className={`${estilos.mensagens__seguindo} ${estilos.mensagens__seguindo_android}`}>Ver lista de <a href="/">pessoas que você segue completa</a></p>
+
+                            {/* Formulario para enviar as mensagens */}
+
+                            <form className={estilos.enviar__mensagens} onSubmit={(e) => enviar_mensagem(e)}>
+
+                                <textarea className={estilos.enviar__mensagens__campor__escrita} id="texto" onChange={(e) => pegar_dados(e)} placeholder="Escreva algo:"></textarea>
+
+                                <input className={estilos.enviar__mensagens__botao} type="submit" value="Enviar" />
+
+                                {props.upload === true ? 
+                                    <div className={estilos.container__box}>
+                                        <div className={estilos.container__box__foto}>
+
+                                            <img className={estilos.container__box__foto__name} src={fotos} alt="Icone de fotos" />
+                                        
+                                            <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/>
+
+                                        </div>
+
+                                        <div className={estilos.container__box__foto} style={{"borderRight": "0px solid"}}>
+
+                                            <img className={estilos.container__box__foto__name} src={video} alt="Icone de fotos" />
+
+                                            <input className={estilos.container__box__foto__file} type="file" name="" id="" multiple/>
+                                        
+                                        </div>
+                                    </div>
 
                                 :
-                                // else
-                                <div className={estilos.container__foto__mensagem}>
-                                    {mensagem[0][index]["fotos"]}
-                                    {mensagem[0][index]["videos"]}
-                                </div>
-                            }
+                                    <div className={estilos.container__box}>
+                                        <div className={estilos.container__box__foto}></div>
 
-                            <form onSubmit={(e) => like(e, flag_infor_comentarios)}>
-                                <div className={estilos.container__mensagem__avaliacao}>
-                                                
-                                    {/* likes */}
-                                    {mensagem[0][index]["likes_user"] ? 
-                                        // if like estive selecionado
-                                        <input onClick={() => {like_deslike = "like"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], mensagem[0][index]["id"], index]} className={estilos.container__mensagem__avaliacao__like__deslike__selecionado} type="submit" value={`Like: ${mensagem[0][index]["likes"]}`}/>
-                                        
-                                    :   // else
-                                        <input onClick={() => {like_deslike = "like"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], mensagem[0][index]["id"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={`Like: ${mensagem[0][index]["likes"]}`}/>
-                                    
-                                    }
-
-                                    {/* deslikes */}
-                                    {mensagem[0][index]["deslikes_user"] ? 
-                                        // if deslike estive selecionado
-                                        <input onClick={() => {like_deslike = "deslike"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], index]} className={estilos.container__mensagem__avaliacao__like__deslike__selecionado} type="submit" value={`Deslikes: ${mensagem[0][index]["deslikes"]}`}/>
-                                        
-                                    :   // else
-                                        <input onClick={() => {like_deslike = "deslike"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={`Deslikes: ${mensagem[0][index]["deslikes"]}`}/>
-                                    
-                                    }
-            
-                                    <input onClick={e => flag_comentarios = true} className={`${estilos.container__box__foto} ${estilos.container__comentario__botao}`} type="submit" value="Comentarios" />
-
-                                    <div onClick={() => {
-                                        setDados(copiar => ({
-                                            ...copiar,
-                                            id_mensagem: mensagem[0][index]["id_msg"]
-                                        }))
-
-                                        abrir_janela_compartilhar_mensagem()
-
-                                    }} className={estilos.container__box__foto}>
-            
-                                        <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
-                                                                
-                                    </div>
-                                </div>
-
-                                <div className={estilos.box__comentarios__desativo}>
-
-                                    <div className={estilos.comentarios__view}>
-
-                                        {/* Comentarios */}
-                                        {dados.msg_infor[index][0][index]["comentario"].map( (comentario, index_comentario ) => (
-
-                                            <div key={index_comentario} className={estilos.comentario__box}>
-                                                <div className={estilos.comentario__box__infor__usuario}>
-
-                                                    {/* Foto de perfil */}
-                                                    <a href="/">
-                                                        {/* <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" /> */}
-                                                        {mensagem[0][index]["foto_de_perfil"] === null ?
-                                                            <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
-                                                        :
-                                                            <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
-                                                        }
-                                                    </a>
-                            
-                                                    {/* Nome do usuário */}
-
-
-                                                    <p className={estilos.comentario__box__nome__usuario}></p>
-
-                                                    <input className={estilos.comentario__box__botao__excluir__comentario} type="button" value="X" />
-                                                </div>
-
-                                                {/* Mensagem do comentario */}
-                                                <div className={estilos.comentario__box__campo__texto__correcao__top}>
-                                                    <div className={estilos.comentario__box__campo__texto}>
-                                                        <p className={estilos.comentario__box__campo__texto__paragrafo}>{comentario["texto_da_mensagem"]}</p>
-                                                    </div>
-                                                </div>
-                                                
-                                                {/* Botões de comentarios */}
-                                                <div className={estilos.comentario__box__submit}>
-                                                    <input className={estilos.comentario__box__submit__input__texto__desativo} type="text" />
-                                                    <input className={estilos.comentario__box__submit__enviar__desativo} type="button" value="Enviar" />
-                                                    {/* O botão de cancelar e o botão de responde mensagem possui o botão que foi clicado um espaço e o id na lista de elementos do botão de responde */}
-                                                    <input id={`botão_cancelar ${7 * (index_comentario + 1)}`} onClick={(e) => {
-
-                                                        flag_comentarios = "responde"
-
-                                                        flag_infor_comentarios = e.target.id
-
-                                                        }} className={estilos.comentario__box__submit__enviar__desativo} type="submit" value="Cancelar" />
-
-                                                    <input id={`botão_responde ${7 * (index_comentario + 1)}`} onClick={(e) => {
-
-                                                        flag_comentarios = "responde"
-
-                                                        flag_infor_comentarios = e.target.id
-
-                                                        }} className={estilos.comentario__box__submit__responde__ativo} type="submit" value="Responde" />
-                                                    
-                                                    <input id="botão_ver_respostas true" onClick={e => {
-
-                                                        flag_comentarios = "ver_respostas"
-
-                                                        flag_infor_comentarios = e.target.id + ` ${index_comentario}`
-
-                                                    }} className={`${estilos.comentario__box__submit__responde__ativo} ${estilos.comentario__box__submit__ver__respostas__ativo}`} type="submit" value="Ver respostas" />
-                                                </div>
-
-                                                {/* Resposta a comentarios */}
-                                                <div className={estilos.respostas__a__comentarios__fundo} style={{"height": "0px"}}>
-                                                    <div className={estilos.respostas__a__comentarios}>
-                                                        <div className={estilos.comentario__box__infor__usuario}>
-
-                                                            {/* Foto de perfil */}
-                                                            <a href="/">
-                                                                {mensagem[0][index]["foto_de_perfil"] === null ? 
-                                                                    <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
-                                                                :
-                                                                    <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
-                                                                }
-                                                            </a>
-                                    
-                                                            {/* Nome do usuário */}
-                                                            <p className={estilos.comentario__box__nome__usuario}>{mensagem[0][index]["nome"]}</p>
-
-                                                            <input className={estilos.comentario__box__botao__excluir__comentario} type="button" value="X" />
-                                                        </div>
-
-                                                        <div className={estilos.comentario__box__campo__texto}>
-                                                            <p className={estilos.comentario__box__campo__texto__paragrafo}>Aqui vai ficar a mensagem</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        ))}
-
+                                        <div className={estilos.container__box__foto} style={{"borderRight": "0px solid"}}></div>
                                     </div>
 
-                                    {/* Enviar comentarios */}
-                                    <div className={estilos.enviar__comentario}>
-                                        <input onChange={e => pegar_dados(e)} className={estilos.enviar__comentario__input__desativo} id={`comentario ${index}`} type="text" placeholder="Adicione um comentario a esse post" value={mensagem[0][index]["comentario_input"]} />
-                                        
-                                        <input onClick={(e) => enviar__comentario(e, index)} className={estilos.enviar__comentario__botao__desativo} type="submit" value="Enviar" />
-                                    </div>
-
-                                </div>
+                                }          
 
                             </form>
-                        </div>
-                    ))}
+                        </>
 
-                </div>
+                        {dados.msg_infor.map((mensagem, index) => (
+                            // console.log(mensagem[0][index]["fotos"][0], mensagem[0][index]["fotos"][0].length)
+
+                            <div key={index} className={estilos.container__mensagem}>
+                                {/* Mensagem dos usuários */}
+            
+                                <div className={estilos.container__mensagem__cabecalho}>
+                                    {/* Foto de perfil */}
+                                    <div className={estilos.container__mensagem__cabecalho__foto}>
+                                        <a href="/">
+                                            {mensagem[0][index]["foto_de_perfil"] === null ? 
+                                                <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={foto__default} alt="Foto de perfil" />
+                                            :
+                                                <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                            }
+                                        </a>
+                                    </div>
+            
+                                    {/* Nome do usuário */}
+                                    <div className={estilos.container__mensagem__user__name}>
+                                        <p>{mensagem[0][index]["nome"]}</p>
+                                    </div>
+            
+                                    {/* Data de publicação */}
+                                    <div className={estilos.container__mensagem__data}>
+                                        <p>{mensagem[0][index]["data_de_publicacao"]}</p>
+                                    </div>
+
+                                    {/* botão de excluir a mensagem */}
+                                    {mensagem[0][index]["usuario"] ? 
+                                        <input onClick={() => {
+                                            abrir_janela = true,
+
+                                            setDados(copiar => ({
+                                                ...copiar,
+                                                id_mensagem: mensagem[0][index]["id_msg"]
+                                            }))
+
+                                            abrir_janela_apagar_mensagem()
+                                        }} className={estilos.container__mensagem__botao__excluir} type="button" value="X" />
+
+                                        :
+                                        <input onClick={() => {
+                                            abrir_janela = true,
+
+                                            setDados(copiar => ({
+                                                ...copiar,
+                                                id_mensagem: mensagem[0][index]["id_msg"]
+                                            }))
+
+                                            abrir_janela_apagar_mensagem()
+                                        }} className={estilos.container__mensagem__botao__excluir__invisivel} type="button" value="X" />
+                                    }
+
+                                </div>
+            
+                                <div className={estilos.container__mensagem__corpo__msg}>
+                                    <div className={estilos.container__mensagem__corpo}>
+                                        <p>{mensagem[0][index]["texto_da_mensagem"]}</p>
+                                    </div>
+                                </div>
+            
+                                {/* Area aonde ficar as fotos e vidéos */}
+                                {mensagem[0][index]["fotos"][0].length === 0 && mensagem[0][index]["videos"][0].length === 0 ? 
+                                    // if não existir fotos e videos
+                                    <div className={estilos.container__foto__mensagem} style={{"height": "2dvh"}}>
+                                        {mensagem[0][index]["fotos"]}
+                                        {mensagem[0][index]["videos"]}
+                                    </div>
+
+                                    :
+                                    // else
+                                    <div className={estilos.container__foto__mensagem}>
+                                        {mensagem[0][index]["fotos"]}
+                                        {mensagem[0][index]["videos"]}
+                                    </div>
+                                }
+
+                                <form onSubmit={(e) => configuracao(e, flag_infor_comentarios)}>
+                                    <div className={estilos.container__mensagem__avaliacao}>
+                                                    
+                                        {/* likes */}
+                                        {mensagem[0][index]["likes_user"] ? 
+                                            // if like estive selecionado
+                                            <div className={estilos.botao__avaliacao__div}>
+                                                <img className={estilos.botao__avaliacao} src={botao_like_selecionado} alt="Botão de like" />
+                                                <input onClick={() => {like_deslike = "like"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], mensagem[0][index]["id"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={mensagem[0][index]["likes"]}/>
+                                            </div>
+
+                                        :   // else
+                                            <div className={estilos.botao__avaliacao__div}>
+                                                <img className={estilos.botao__avaliacao} src={botao_like} alt="Botão de like" />
+                                                <input onClick={() => {like_deslike = "like"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], mensagem[0][index]["id"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={`${mensagem[0][index]["likes"]}`}/>
+                                            </div>
+                                        }
+
+                                        {/* deslikes */}
+                                        {mensagem[0][index]["deslikes_user"] ? 
+                                            // if deslike estive selecionado
+                                            <div className={estilos.botao__avaliacao__div}>
+                                                <img className={estilos.botao__avaliacao} src={botao_deslike_selecionado} alt="Botão de like" />
+                                                <input onClick={() => {like_deslike = "deslike"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={mensagem[0][index]["deslikes"]}/>
+                                            </div>
+
+                                        :   // else
+                                            <div className={estilos.botao__avaliacao__div}>
+                                                <img className={estilos.botao__avaliacao} src={botao_deslike} alt="Botão de like" />
+                                                <input onClick={() => {like_deslike = "deslike"; flag_comentarios = false}} id={[mensagem[0][index]["id_msg"], index]} className={estilos.container__mensagem__avaliacao__like__deslike} type="submit" value={mensagem[0][index]["deslikes"]}/>
+                                            </div>
+                                        }
+                
+                                        <input onClick={e => flag_comentarios = true} className={`${estilos.container__box__foto} ${estilos.container__comentario__botao}`} type="submit" value="Comentarios" />
+
+                                        <div onClick={() => {
+                                            setDados(copiar => ({
+                                                ...copiar,
+                                                id_mensagem: mensagem[0][index]["id_msg"]
+                                            }))
+
+                                            abrir_janela_compartilhar_mensagem()
+
+                                        }} className={estilos.container__box__foto} style={{"borderRight": "0px solid"}}>
+                
+                                            <img className={`${estilos.container__box__foto__name} ${estilos.container__mensagem__avaliacao__compartilhar}`} src={compartilhar} alt="Icone compartilhar" />
+                                                                    
+                                        </div>
+                                    </div>
+
+                                    <div className={estilos.box__comentarios__desativo}>
+
+                                        <div className={estilos.comentarios__view}>
+
+                                            {/* Comentarios */}
+                                            {dados.msg_infor[index][0][index]["comentario"].map( (comentario, index_comentario ) => (
+
+                                                <div key={index_comentario} className={estilos.comentario__box}>
+                                                    <div className={estilos.comentario__box__infor__usuario}>
+
+                                                        {/* Foto de perfil */}
+                                                        <a href="/">
+                                                            {/* <img className={estilos.container__mensagem__cabecalho__foto__perfil} src={`http://${server}:3000/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" /> */}
+                                                            {mensagem[0][index]["foto_de_perfil"] === null ?
+                                                                <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
+                                                            :
+                                                                <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                            }
+                                                        </a>
+                                
+                                                        {/* Nome do usuário */}
+
+
+                                                        <p className={estilos.comentario__box__nome__usuario}></p>
+
+                                                        <input className={estilos.comentario__box__botao__excluir__comentario} type="button" value="X" />
+                                                    </div>
+
+                                                    {/* Mensagem do comentario */}
+                                                    <div className={estilos.comentario__box__campo__texto__correcao__top}>
+                                                        <div className={estilos.comentario__box__campo__texto}>
+                                                            <p className={estilos.comentario__box__campo__texto__paragrafo}>{comentario["texto_da_mensagem"]}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Botões de comentarios */}
+                                                    <div className={estilos.comentario__box__submit}>
+                                                        <input className={estilos.comentario__box__submit__input__texto__desativo} type="text" />
+                                                        <input className={estilos.comentario__box__submit__enviar__desativo} type="button" value="Enviar" />
+                                                        {/* O botão de cancelar e o botão de responde mensagem possui o botão que foi clicado um espaço e o id na lista de elementos do botão de responde */}
+                                                        <input id={`botão_cancelar ${7 * (index_comentario + 1)}`} onClick={(e) => {
+
+                                                            flag_comentarios = "responde"
+
+                                                            flag_infor_comentarios = e.target.id
+
+                                                            }} className={estilos.comentario__box__submit__enviar__desativo} type="submit" value="Cancelar" />
+
+                                                        <input id={`botão_responde ${7 * (index_comentario + 1)}`} onClick={(e) => {
+
+                                                            flag_comentarios = "responde"
+
+                                                            flag_infor_comentarios = e.target.id
+
+                                                            }} className={estilos.comentario__box__submit__responde__ativo} type="submit" value="Responde" />
+                                                        
+                                                        <input id="botão_ver_respostas true" onClick={e => {
+
+                                                            flag_comentarios = "ver_respostas"
+
+                                                            flag_infor_comentarios = e.target.id + ` ${index_comentario}`
+
+                                                        }} className={`${estilos.comentario__box__submit__responde__ativo} ${estilos.comentario__box__submit__ver__respostas__ativo}`} type="submit" value="Ver respostas" />
+                                                    </div>
+
+                                                    {/* Resposta a comentarios */}
+                                                    <div className={estilos.respostas__a__comentarios__fundo} style={{"height": "0px"}}>
+                                                        <div className={estilos.respostas__a__comentarios}>
+                                                            <div className={estilos.comentario__box__infor__usuario}>
+
+                                                                {/* Foto de perfil */}
+                                                                <a href="/">
+                                                                    {mensagem[0][index]["foto_de_perfil"] === null ? 
+                                                                        <img className={estilos.comentario__box__foto} src={foto__default} alt="Foto de perfil" />
+                                                                    :
+                                                                        <img className={estilos.comentario__box__foto} src={`${server}/pegar__fotos__perfil?link=${mensagem[0][index]["foto_de_perfil"]}`} alt="Foto de perfil" />
+                                                                    }
+                                                                </a>
+                                        
+                                                                {/* Nome do usuário */}
+                                                                <p className={estilos.comentario__box__nome__usuario}>{mensagem[0][index]["nome"]}</p>
+
+                                                                <input className={estilos.comentario__box__botao__excluir__comentario} type="button" value="X" />
+                                                            </div>
+
+                                                            <div className={estilos.comentario__box__campo__texto}>
+                                                                <p className={estilos.comentario__box__campo__texto__paragrafo}>Aqui vai ficar a mensagem</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            ))}
+
+                                        </div>
+
+                                        {/* Enviar comentarios */}
+                                        <div className={estilos.enviar__comentario}>
+                                            <input onChange={e => pegar_dados(e)} className={estilos.enviar__comentario__input__desativo} id={`comentario ${index}`} type="text" placeholder="Adicione um comentario a esse post" value={mensagem[0][index]["comentario_input"]} />
+                                            
+                                            <input onClick={(e) => enviar__comentario(e, index)} className={estilos.enviar__comentario__botao__desativo} type="submit" value="Enviar" />
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        ))}
+
+                    </div>
+                }
 
                 {/* Minhas redes sociais */}
                 <div className={estilos.perfis__usuário}>

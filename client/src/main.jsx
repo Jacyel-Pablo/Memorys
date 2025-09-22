@@ -14,11 +14,17 @@ import App from './App.jsx'
 // Coloque aqui a porta do servidor e no arquivo server.js ultima linha
 const port_server = "https://memorys-backend.onrender.com"
 
-const protecao = {
-  "/home": <Home server={port_server}/>,
+// Permitir upload de fotos e vídeos true ativo false desativo
+const upload_foto_video_ativas = false
+
+// Envio de email está ativo true ativo false desativo
+const usar_email = false
+
+var protecao = {
+  "/home": <Home server={port_server} upload={upload_foto_video_ativas}/>,
   "/perfil": <Perfil__user server={port_server}/>,
   "/ver_seguidores": <Ver_seguidores server={port_server}/>,
-  "/configuracao_conta": <Configuracao_conta server={port_server}/>
+  "/configuracao_conta": <Configuracao_conta server={port_server} upload={upload_foto_video_ativas}/>
 }
 
 const testes = false
@@ -27,6 +33,15 @@ function Protecao__telas()
 {
   if (testes === false) {
     const [telas, setTelas] = useState(<></>)
+    const paramentos = new URLSearchParams(window.location.search).toString().split("=")
+    
+    if (paramentos.length === 2) {
+      localStorage.setItem("msg", paramentos[1])
+
+    } else {
+      localStorage.setItem("msg", null)
+      
+    }
 
     fetch(`${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
       if (dados === true) {
@@ -52,7 +67,7 @@ const rotas = createBrowserRouter([
   },
   {
     path: "/criar_conta",
-    element: <Criar_conta server={port_server}/>
+    element: <Criar_conta server={port_server} upload={upload_foto_video_ativas} usar_email={usar_email}/>
   },
   {
     path: "/ativar__conta",

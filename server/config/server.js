@@ -8,7 +8,6 @@ import { storage, validar } from "./middlewares.js"
 import path from "path"
 import { criar_token, verificar_token, enviar_email } from "./config__server.js"
 import z from "zod"
-import { console, url } from "inspector"
 
 const app = express()
 const prisma = new PrismaClient()
@@ -17,11 +16,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-    "origin": "*",
+    "origin": "https://memorys.onrender.com",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
+// Coloque aqui se o upload de foto e vídeos estão ligados
+const upload = false
 
 app.post("/criar__conta",
     
@@ -69,7 +71,8 @@ app.post("/criar__conta",
             }
         })
 
-        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em https://memorys.onrender.com/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="https://memorys.onrender.com/ativar__conta?id=${dados.id}">click aqui</p>`)
+        // Aqui você pode sendgrid para gmail se quiser usar o gmail
+        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em https://memorys.onrender.com/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="https://memorys.onrender.com/ativar__conta?id=${dados.id}">click aqui</p>`, "sendgrid")
 
         res.status(201).send(true)
 
@@ -132,8 +135,6 @@ app.get("/login",
         if (await bcrypt.compare(senha, usuario.senha) && usuario.ativo == true) {
             const token = await criar_token(email)
 
-            enviar_email(email, "Novo acesso a sua conta do Memorys", `Sua conta foi acessada por um dispositivo`, `<p>Sua conta foi acessada por um dispositivo</p>`)
-
             res.status(201).send([true, token, usuario.id])
 
         } else {
@@ -178,8 +179,6 @@ app.post("/enviar__mensagem",
             texto: z.string().min(5)
         })
     })),
-
-    // storage(["video/mp4", "video/x-matroska"], "/config/files/videos").array("videos"),
 
     async (req, res) => {
 
@@ -239,7 +238,7 @@ app.get("/pegar__mensagens__compartilhada", async (req, res) => {
     const { id_user, id_msg } = req.query
 
     try {
-        let msg = await prisma.memorys_mensagem.findUnique({
+        let msg = await prisma.memorys_Mensagem.findUnique({
             where: {
                 id: id_msg
             }
@@ -256,7 +255,7 @@ app.get("/pegar__mensagens__compartilhada", async (req, res) => {
 
         delete msg[0].id_usuario
 
-        const likes = await prisma.memorys_likes.count({
+        const likes = await prisma.memorys_Likes.count({
             where: {
                 id_mensagem: msg[0].id
             }
@@ -264,7 +263,7 @@ app.get("/pegar__mensagens__compartilhada", async (req, res) => {
 
         msg[0]["likes"] = likes                
 
-        const deslikes = await prisma.memorys_deslikes.count({
+        const deslikes = await prisma.memorys_Deslikes.count({
             where: {
                 id_mensagem: msg[0].id
             }
@@ -272,7 +271,7 @@ app.get("/pegar__mensagens__compartilhada", async (req, res) => {
 
         msg[0]["deslikes"] = deslikes
 
-        const likes_user = await prisma.memorys_likes.count({
+        const likes_user = await prisma.memorys_Likes.count({
             where: {
                 id_mensagem: msg[0].id,
                 id_usuario: id_user
@@ -286,7 +285,7 @@ app.get("/pegar__mensagens__compartilhada", async (req, res) => {
             msg[0]["likes_user"] = false
         }
 
-        const deslikes_user = await prisma.memorys_deslikes.count({
+        const deslikes_user = await prisma.memorys_Deslikes.count({
             where: {
                 id_mensagem: msg[0].id,
                 id_usuario: id_user
@@ -346,6 +345,13 @@ app.post("/curtir__mensagem",
 
             // Número de likes da postagem
             let numero_likes = await prisma.memorys_Likes.count({
+                where: {
+                    id_mensagem: id_msg
+                }
+            })
+
+            // Número de deslikes da postagem
+            let numero_deslikes = await prisma.memorys_Deslikes.count({
                 where: {
                     id_mensagem: id_msg
                 }
@@ -691,98 +697,119 @@ app.get("/pegar__mensagens",
     }
 })
 
-// app.get("/pegar__midia__mensagens", 
-//     validar(z.object({
-//         query: z.object({
-//             id: z.string().cuid().min(5)
-//         })
+app.get("/pegar__midia__mensagens", 
+    validar(z.object({
+        query: z.object({
+            id: z.string().cuid().min(5)
+        })
 
-//     }))
+    }))
     
-//     , async (req, res) => {
+    , async (req, res) => {
 
-//     const { id } = req.query
+    const { id } = req.query
 
-//     try {
-//         let lista_midias = []
+    try {
+        switch (upload) {
+            case true:
 
-//         // Tentando pegar fotos das mensagens
-//         let midias = await prisma.memorys_Foto.findMany({
-//             where: {
-//                 id_mensagem: id
-//             }
-//         })
+                let lista_midias = []
 
-//         let fotos = []
+                // Tentando pegar fotos das mensagens
+                let midias = await prisma.memorys_Foto.findMany({
+                    where: {
+                        id_mensagem: id
+                    }
+                })
 
-//         for (let i = 0; i < midias.length; i++) {
-//             fotos.push(midias[i].fotos)
-//         }
+                let fotos = []
 
-//         lista_midias.push({"fotos": fotos})
+                for (let i = 0; i < midias.length; i++) {
+                    fotos.push(midias[i].fotos)
+                }
 
-//         // Tentando pegar vidéos das mensagens
-//         midias = await prisma.memorys_Video.findMany({
-//             where: {
-//                 id_mensagem: id
-//             }
-//         })
+                lista_midias.push({"fotos": fotos})
 
-//         let videos = []
+                // Tentando pegar vidéos das mensagens
+                midias = await prisma.memorys_Video.findMany({
+                    where: {
+                        id_mensagem: id
+                    }
+                })
 
-//         for (let i = 0; i < midias.length; i++) {
-//             videos.push(midias[i].videos)
-//         }
+                let videos = []
 
-//         lista_midias.push({"videos": videos})
+                for (let i = 0; i < midias.length; i++) {
+                    videos.push(midias[i].videos)
+                }
 
-//         // Enviando mensagem para o cliente
-//         if (lista_midias.length == 0) {
-//             res.status(404).send(false)
+                lista_midias.push({"videos": videos})
 
-//         } else {
-//             res.status(200).send(lista_midias)
+                // Enviando mensagem para o cliente
+                if (lista_midias.length == 0) {
+                    res.status(404).send(false)
 
-//         }
+                } else {
+                    res.status(200).send(lista_midias)
 
-//     } catch (e) {
-//         console.log(e)
-//         res.status(404).send(false)
-//     }
-// })
+                }
 
-// app.get("/pegar__fotos__videos__mensagens",
-//     validar(z.object({
-//         query: z.object({
-//             tipo: z.string().min(3),
-//             url: z.string().min(3)
-//         })
+                break
 
-//     }))
+            case false:
+                res.status(200).send([])
+                break
+        }
+
+
+    } catch (e) {
+        console.log(e)
+        res.status(404).send(false)
+    }
+})
+
+app.get("/pegar__fotos__videos__mensagens",
+    validar(z.object({
+        query: z.object({
+            tipo: z.string().min(3),
+            url: z.string().min(3)
+        })
+
+    }))
     
-//     , (req, res) => {
+    , (req, res) => {
 
-//     let { tipo, url } = req.query
+    let { tipo, url } = req.query
 
-//     try {
-//         switch (tipo) {
-//             case "foto":
-//                 res.status(200).sendFile(url)
-//                 break
+    try {
+        switch (upload) {
+            case true:
 
-//             case "video":
-//                 res.status(200).sendFile(url)
-//                 break
+                switch (tipo) {
+                    case "foto":
+                        res.status(200).sendFile(url)
+                        break
 
-//             default:
-//                 res.status(404).send(false)
-//         }
+                    case "video":
+                        res.status(200).sendFile(url)
+                        break
 
-//     } catch (e) {
-//         console.log(e)
-//         res.status(404).send(false)
-//     }
-// })
+                    default:
+                        res.status(404).send(false)
+                }
+                break
+
+            case false:
+                res.status(404).send(false)
+                break
+
+        }
+
+    } catch (e) {
+        console.log(e)
+        res.status(404).send(false)
+    }
+})
 
 app.post("/enviar_comentarios", async ( req, res ) => {
 
@@ -837,13 +864,13 @@ app.get("/encontrar__usuario",
     nome += "%"
 
     try {
-        const user_names = await prisma.$queryRaw`SELECT id, foto_de_perfil, nome FROM 'Memorys_Usuario' WHERE LOWER(nome) LIKE LOWER(${nome}) AND ativo LIKE true`
+        const user_names = await prisma.$queryRaw`SELECT id, foto_de_perfil, nome FROM "Memorys_Usuario" WHERE LOWER(nome) LIKE LOWER(${nome}) AND ativo = true`
 
         res.status(200).send(user_names)
 
     } catch (e) {
         console.log(e)
-        res.status(404).send(false)
+        res.status(404).send(e)
     }
 })
 
@@ -877,83 +904,109 @@ app.get("/pegar__foto",
     }
 })
 
-// app.get("/pegar__fotos__perfil",
+app.get("/pegar__fotos__perfil",
 
-//     validar(z.object({
-//         query: z.object({
-//             link: z.string().min(3)
-//         })
-//     })),
-//     (req, res) => {
+    validar(z.object({
+        query: z.object({
+            link: z.string().min(3)
+        })
+    })),
+    (req, res) => {
 
-//     let { link } = req.query
+    let { link } = req.query
 
-//     try {
+    try {
 
-//         if (link != "null") {
-//             res.status(200).sendFile(link)
+        switch (upload) {
+            case true:
+                if (link != "null") {
+                    res.status(200).sendFile(link)
 
-//         } else {
-//             res.status(200).sendFile(path.resolve(path.dirname("")) + "/config/files/foto_de_perfil/Default.png")
-//         }
+                } else {
+                    res.status(200).sendFile(path.resolve(path.dirname("")) + "/config/files/foto_de_perfil/Default.png")
+                }
+                break
 
-//     } catch (e) {
-//         console.log(e)
-//         res.status(404).send(false)
-//     }
-// })
+            case false:
+                res.status(200).sendFile(path.resolve(path.dirname("")) + "/config/files/foto_de_perfil/Default.png")
+                break
+        }
 
-// app.put("/alterar__foto",
+    } catch (e) {
+        console.log(e)
+        res.status(404).send(false)
+    }
+})
 
-//     storage(["image/jpeg", "image/png", "image/jpg", "image/gif"], "/config/files/foto_de_perfil").single("foto"), 
+app.put("/alterar__foto",
+
+    storage(["image/jpeg", "image/png", "image/jpg", "image/gif"], "/config/files/foto_de_perfil").single("foto"), 
     
-//     validar(z.object({
-//         body: z.object({
-//             id: z.string().cuid().min(3)
-//         })
-//     })),
+    validar(z.object({
+        body: z.object({
+            id: z.string().cuid().min(3)
+        })
+    })),
 
-//     async (req, res) => {
+    async (req, res) => {
 
-//     let { id } = req.body
+    let { id } = req.body
 
-//     try {
-//         const usuario = await prisma.memorys_Usuario.findUnique({
-//             where: {
-//                 id: id
-//             }
-//         })
+    try {
+        switch (upload) {
+            case true:
+                const usuario = await prisma.memorys_Usuario.findUnique({
+                    where: {
+                        id: id
+                    }
+                })
 
-//         if (usuario.foto_de_perfil != null) {
-//             unlink(usuario.foto_de_perfil)
-//         }
+                if (usuario.foto_de_perfil != null) {
+                    unlink(usuario.foto_de_perfil)
+                }
 
-//         let foto = ""
+                let foto = ""
 
-//         if (req.file == undefined) {
-//             foto = null
+                if (req.file == undefined) {
+                    foto = null
 
-//         } else {
-//             foto = req.file.path
-//         }
+                } else {
+                    foto = req.file.path
+                }
 
-//         await prisma.memorys_Usuario.update({
-//             where: {
-//                 id: id
-//             },
-//             data: {
-//                 foto_de_perfil: foto
-//             }
-//         })
+                await prisma.memorys_Usuario.update({
+                    where: {
+                        id: id
+                    },
+                    data: {
+                        foto_de_perfil: foto
+                    }
+                })
 
-//         res.status(201).send(true)
+                await prisma.memorys_Mensagem.updateMany({
+                    where: {
+                        id_usuario: id
+                    },
+                    data: {
+                        foto_de_perfil: foto
+                    }
+                })
 
-//     } catch (e) {
-//         console.log(e)
+                res.status(201).send(true)
 
-//         res.status(404).send(false)
-//     }
-// })
+                break
+
+            case false:
+                res.status(404).send(false)
+                break
+        }
+
+    } catch (e) {
+        console.log(e)
+
+        res.status(404).send(false)
+    }
+})
 
 app.get("/pegar__nome", 
     validar(z.object({
@@ -996,6 +1049,15 @@ app.put("/alterar__nome",
         await prisma.memorys_Usuario.update({
             where: {
                 id: id
+            },
+            data: {
+                nome: nome
+            }
+        })
+
+        await prisma.memorys_Mensagem.updateMany({
+            where: {
+                id_usuario: id
             },
             data: {
                 nome: nome
@@ -1072,6 +1134,18 @@ app.delete("/deletar__conta",
             }
         })
 
+        await prisma.memorys_Likes.deleteMany({
+            where: {
+                id_usuario: id
+            }
+        })
+
+        await prisma.memorys_Deslikes.deleteMany({
+            where: {
+                id_usuario: id
+            }
+        })
+
         await prisma.memorys_Mensagem.deleteMany({
             where: {
                 nome: usuario.nome
@@ -1087,6 +1161,7 @@ app.delete("/deletar__conta",
         res.status(201).send(true)
 
     } catch (e) {
+        console.log(e)
         res.status(404).send(false)
     }
 })
@@ -1103,4 +1178,4 @@ process.on("SIGTERM", async() => {
 
 export default app
 
-app.listen(3000, "0.0.0.0", () => console.log("Servidor rodando na porta3000"))
+app.listen(3000, "0.0.0.0", () => console.log("Servidor rodando"))

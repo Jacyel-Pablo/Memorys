@@ -46,7 +46,7 @@ model Memorys_Mensagem {
 model Memorys_Likes {
   id                 String           @id   @unique  @default(cuid())
   id_mensagem        String
-  id_usuario         String
+  id_usuario         String           @unique
 
   mensagem           Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
 }
@@ -54,7 +54,7 @@ model Memorys_Likes {
 model Memorys_Deslikes {
   id                 String           @id   @unique  @default(cuid())
   id_mensagem        String
-  id_usuario         String
+  id_usuario         String           @unique
 
   mensagem           Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
 }

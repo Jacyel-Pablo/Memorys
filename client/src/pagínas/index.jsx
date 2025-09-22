@@ -1,5 +1,5 @@
 import estilos from "../css/index.module.css"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
 export default function Index(props)
@@ -9,7 +9,9 @@ export default function Index(props)
         esqueceu_senha_a: "senha",
 
         email: "",
-        senha: ""
+        senha: "",
+
+        msg: localStorage.getItem("msg")
     })
 
     const server = props.server
@@ -38,7 +40,13 @@ export default function Index(props)
                     localStorage.setItem("token", resposta[1])
                     localStorage.setItem("id", resposta[2])
                     localStorage.setItem("email", dados.email)
-                    location.href = "/home"
+
+                    if (toString(dados.msg) === "null") {
+                        location.href = `/home?msg=${dados.msg}`
+
+                    } else {
+                        location.href = "/home"
+                    }
     
                 } else {
                     alert("Email ou senha incorretos!")
@@ -47,6 +55,11 @@ export default function Index(props)
             })
         }
     }
+
+    useEffect(() => {
+        localStorage.removeItem("msg")
+        
+    }, [dados.msg])
 
     return (
         <div className={estilos.corpo}>

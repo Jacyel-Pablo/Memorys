@@ -45,7 +45,8 @@ export default function Criar_conta(props)
         
                 }).then(estado => estado.json()).then(estado => {
                     if (estado) {
-                        alert("Usuário criado com sucesso! \n agora ative sua conta com o link do email que enviamos a você.")
+                        alert("Usuário criado com sucesso! \n agora ative sua conta com o link do email que enviamos a você.\nser não consegui ver, vai na parte de spam")
+
                         location.href = "/"
         
                     } else {
@@ -82,9 +83,14 @@ export default function Criar_conta(props)
             <form className={estilos.container} onSubmit={(e) => submit(e)}>
                 <h1 className={estilos.container__titulo}>Criar conta</h1>
 
-                <p className={estilos.container__textos}>Foto de perfil:</p>
-                <input className={estilos.container__escolher__arquivo} style={{width: "20%"}} type="button" onClick={() => alert("Essa opção foi desativada pelo dev")} name="foto" value="Escolher arquivo" />
-                {/* <input className={estilos.container__escolher__arquivo} type="file" onChange={(e) => save_data(e)} name="foto" /> */}
+                {props.upload === true ?
+                    <div>
+                        <p className={estilos.container__textos}>Foto de perfil:</p>
+                        <input className={estilos.container__escolher__arquivo} type="file" onChange={(e) => save_data(e)} name="foto" />
+                    </div>
+                :
+                    <></>
+                }
 
                 <p className={estilos.container__textos}>Nome de usuário:</p>
                 <input className={estilos.container__campos} type="text" onChange={(e) => save_data(e)} name="nome" placeholder="Insira um nome de usuário:" />
