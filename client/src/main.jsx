@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Index from './pagínas/index.jsx'
 import Criar_conta from './pagínas/criar_conta.jsx'
+import Alterar_senha from './pagínas/alterar_senha.jsx'
 import Home from './pagínas/home.jsx'
 import Perfil__user from './pagínas/perfil user.jsx'
 import Ver_seguidores from './pagínas/ver seguidores.jsx'
@@ -13,6 +14,7 @@ import App from './App.jsx'
 
 // Coloque aqui a porta do servidor e no arquivo server.js ultima linha
 const port_server = "https://memorys-backend.onrender.com"
+// const port_server = "http://localhost:3000"
 
 // Permitir upload de fotos e vídeos true ativo false desativo
 const upload_foto_video_ativas = false
@@ -68,6 +70,10 @@ const rotas = createBrowserRouter([
   {
     path: "/criar_conta",
     element: <Criar_conta server={port_server} upload={upload_foto_video_ativas} usar_email={usar_email}/>
+  },
+  {
+    path: "/alterar_senha",
+    element: <Alterar_senha server={port_server}/>
   },
   {
     path: "/ativar__conta",

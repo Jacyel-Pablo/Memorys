@@ -3,6 +3,7 @@ import express from "express"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcrypt"
 import cors from "cors"
+import cuid from "@bugsnag/cuid"
 import { unlink } from "fs/promises"
 import { storage, validar } from "./middlewares.js"
 import path from "path"
@@ -80,6 +81,88 @@ app.post("/criar__conta",
         console.log(e)
 
         res.status(404).send(false)
+    }
+})
+
+app.post("/enviar__email__recuperacao",
+    validar(z.object({
+        body: z.object({
+            email: z.string().email().min(4)
+        })
+    }))
+
+    , async (req, res) => {
+    try {
+        const { email } = req.body
+
+        const confirmar_user = await prisma.memorys_Usuario.count({
+            where: {
+                email: email
+            }
+        })
+
+        if (confirmar_user > 0) {
+
+            const dados_user = await prisma.memorys_Usuario.findUnique({
+                where: {
+                    email: email
+                }
+            })
+
+            enviar_email(email, "Recuperação de conta", "Para redefinir sua senha clique aqui", `<p>Para redefinir sua senha <a href='https://memorys.onrender.com/alterar_senha?id=${dados_user["id"]}'>clique aqui</a></p>`, "sendgrid")
+            
+            res.status(200).send({msg: "Enviamos um email para você verifique seu email"})
+        
+        } else {
+            res.status(404).send({msg: "Usuário não encontrado"})
+        }
+
+    } catch (e) {
+        console.log(e)
+        res.status(404).send({msg: "Ocorreu um erro interno"})
+    }
+})
+
+app.put("/alterar__senha",
+    
+    validar(z.object({
+        body: z.object({
+            id: z.string().min(3),
+            password: z.string().min(3),
+            password1: z.string().min(3)
+        })
+    })),
+
+    async ( req, res ) => {
+
+    try {
+        const { id, password, password1 } = req.body
+
+        if (password === password1) {
+            const new_id = cuid()
+
+            const senha = await bcrypt.hash(password, Number(process.env.PULO))
+
+            await prisma.memorys_Usuario.update({
+                where: {
+                    id: id
+                },
+                data: {
+                    id: new_id,
+                    senha: senha
+                }
+            })
+
+            res.status(200).send([true, "Senha alterada com sucesso"])
+
+        } else {
+            res.status(404).send([false, "As duas senhas inseridas são diferentes"])
+        
+        }
+
+    } catch (e) {
+        console.log(e)
+        res.status(404).send([false, "Ocorreu um erro"])
     }
 })
 

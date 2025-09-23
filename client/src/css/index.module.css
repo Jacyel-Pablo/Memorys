@@ -52,6 +52,12 @@
     background-color: var(--cor-azul);
     color: white;
 }
+.esqueceu__senha{
+    color: #646cff;
+    font-size: 100%;
+    background-color: white;
+    border: white solid;
+}
 
 /* CSS da pagína criar_conta.jsx */
 
