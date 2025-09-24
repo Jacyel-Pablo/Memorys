@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-    "origin": "https://memorys.onrender.com",
+    "origin": "https://memorys-iota.vercel.app/",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
@@ -73,7 +73,7 @@ app.post("/criar__conta",
         })
 
         // Aqui você pode sendgrid para gmail se quiser usar o gmail
-        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em https://memorys.onrender.com/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="https://memorys.onrender.com/ativar__conta?id=${dados.id}">click aqui</p>`, "sendgrid")
+        enviar_email(email, "Ativação da sua conta do Memorys", `É necessario ativa sua conta em https://memorys-iota.vercel.app/ativar__conta?id=${dados.id}`, `<p>É necessario ativa sua conta em <a href="https://memorys-iota.vercel.app/ativar__conta?id=${dados.id}">click aqui</p>`, "sendgrid")
 
         res.status(201).send(true)
 
@@ -109,7 +109,7 @@ app.post("/enviar__email__recuperacao",
                 }
             })
 
-            enviar_email(email, "Recuperação de conta", "Para redefinir sua senha clique aqui", `<p>Para redefinir sua senha <a href='https://memorys.onrender.com/alterar_senha?id=${dados_user["id"]}'>clique aqui</a></p>`, "sendgrid")
+            enviar_email(email, "Recuperação de conta", "Para redefinir sua senha clique aqui", `<p>Para redefinir sua senha <a href='https://memorys-iota.vercel.app/alterar_senha?id=${dados_user["id"]}'>clique aqui</a></p>`, "sendgrid")
             
             res.status(200).send({msg: "Enviamos um email para você verifique seu email"})
         

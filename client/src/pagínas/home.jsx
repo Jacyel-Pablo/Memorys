@@ -871,7 +871,7 @@ export default function Home(props)
 
                 <div className={estilos.container__compartilhar__mensagem__corpo}>
                     <button onClick={() => {
-                        copy(`http://localhost:5173/home?msg=${dados.id_mensagem}`)
+                        copy(`https://memorys-iota.vercel.app/home?msg=${dados.id_mensagem}`)
                         // copy(`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`)
                         alert("Link da mensagem copiado")
                         }} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
@@ -880,17 +880,17 @@ export default function Home(props)
                         <p>Copiar link</p>
                     </button>
 
-                    <WhatsappShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
+                    <WhatsappShareButton url={`https://memorys-iota.vercel.app/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         <WhatsappIcon />
                         <p>Whatsapp</p>
                     </WhatsappShareButton>
 
-                    <TwitterShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
+                    <TwitterShareButton url={`https://memorys-iota.vercel.app/home?msg=${dados.id_mensagem}`} className={estilos.compartilhar__botao__com__icone__das__redes__sociais}>
                         <XIcon/>
                         <p>X</p>
                     </TwitterShareButton>
 
-                    <EmailShareButton url={`https://memorys.onrender.com/home?msg=${dados.id_mensagem}`} className={`${estilos.compartilhar__botao__com__icone__das__redes__sociais} ${estilos.compartilhar__botao__com__icone__das__redes__sociais__email}`}>
+                    <EmailShareButton url={`https://memorys-iota.vercel.app/home?msg=${dados.id_mensagem}`} className={`${estilos.compartilhar__botao__com__icone__das__redes__sociais} ${estilos.compartilhar__botao__com__icone__das__redes__sociais__email}`}>
                         <EmailIcon/>
                         <p>Email</p>
                     </EmailShareButton>
