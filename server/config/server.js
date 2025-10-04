@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
     "origin": "https://memorys-iota.vercel.app",
+    // "origin": "*",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
@@ -153,6 +154,51 @@ app.put("/alterar__senha",
                 }
             })
 
+            await prisma.memorys_Deslikes.updateMany({
+                where: {
+                    id_usuario: id
+                },
+                data: {
+                    id_usuario: new_id
+                }
+            })
+
+            await prisma.memorys_Likes.updateMany({
+                where: {
+                    id_usuario: id
+                },
+                data: {
+                    id_usuario: new_id
+                }
+            })
+
+            await prisma.memorys_Mensagem.updateMany({
+                where: {
+                    id_usuario: id
+                },
+                data: {
+                    id_usuario: new_id
+                }
+            })
+
+            await prisma.memorys_Seguidores.updateMany({
+                where: {
+                    userid: id
+                },
+                data: {
+                    userid: new_id
+                }
+            })
+
+            await prisma.memorys_Seguindo.updateMany({
+                where: {
+                    userid: id
+                },
+                data: {
+                    userid: new_id
+                }
+            })
+
             res.status(200).send([true, "Senha alterada com sucesso"])
 
         } else {
@@ -235,18 +281,32 @@ app.get("/login",
 app.get("/verificar__token",
     validar(z.object({
         query: z.object({
-            token: z.string().min(5)
+            token: z.string().min(5),
+            id: z.string().cuid().min(5)
         })
     })),
     
     async (req, res) => {
 
-    let { token } = req.query
+    let { token, id } = req.query
 
     try {
-        const vali_token = await verificar_token(token)
 
-        res.status(200).send(vali_token)
+        const usuario = await prisma.memorys_Usuario.count({
+            where: {
+                id: id
+            }
+        })
+
+        if (usuario > 0) {
+            const vali_token = await verificar_token(token)
+
+            res.status(200).send(vali_token)
+
+        } else {
+            res.status(200).send(false)
+
+        }
 
     } catch (e) {
         res.status(404).send(false)

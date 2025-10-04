@@ -9,6 +9,7 @@ import Perfil__user from './pagínas/perfil user.jsx'
 import Ver_seguidores from './pagínas/ver seguidores.jsx'
 import Configuracao_conta from './pagínas/configuracao conta.jsx'
 import Ativar__conta from './pagínas/ativar__conta.jsx'
+import Pagina_nao_encotrada from './pagínas/pagína_nao_encotrada.jsx'
 import './index.css'
 import App from './App.jsx'
 
@@ -21,6 +22,13 @@ const upload_foto_video_ativas = false
 
 // Envio de email está ativo true ativo false desativo
 const usar_email = false
+
+const rotas_normais = {
+  "/": <Index server={port_server}/>,
+  "/criar_conta": <Criar_conta server={port_server} upload={upload_foto_video_ativas} usar_email={usar_email}/>,
+  "/alterar_senha": <Alterar_senha server={port_server}/>,
+  "/ativar__conta": <Ativar__conta server={port_server}/>,
+}
 
 var protecao = {
   "/home": <Home server={port_server} upload={upload_foto_video_ativas}/>,
@@ -45,13 +53,20 @@ function Protecao__telas()
       
     }
 
-    fetch(`${port_server}/verificar__token?token=${localStorage.getItem("token")}`).then(dados => dados.json()).then(dados => {
-      if (dados === true) {
+    fetch(`${port_server}/verificar__token?token=${localStorage.getItem("token")}&id=${localStorage.getItem("id")}`).then(dados => dados.json()).then(dados => {
+      if (dados === true && Object.keys(protecao).indexOf(window.location.pathname) >= 0) {
         setTelas(protecao[window.location.pathname])
         
-      } else {
+      } else if (dados === true && Object.keys(protecao).indexOf(window.location.pathname) <= -1) {
+        window.location.href = "/home"
+
+      } else if (dados === false && Object.keys(protecao).indexOf(window.location.pathname) >= 0) {
         window.location.href = "/"
+
+      } else {
+        setTelas(rotas_normais[window.location.pathname])
       }
+
     })
   
     return telas
@@ -65,19 +80,19 @@ function Protecao__telas()
 const rotas = createBrowserRouter([
   {
     path: "/",
-    element: <Index server={port_server}/>
+    element: <Protecao__telas/>
   },
   {
     path: "/criar_conta",
-    element: <Criar_conta server={port_server} upload={upload_foto_video_ativas} usar_email={usar_email}/>
+    element: <Protecao__telas/>
   },
   {
     path: "/alterar_senha",
-    element: <Alterar_senha server={port_server}/>
+    element: <Protecao__telas/>
   },
   {
     path: "/ativar__conta",
-    element: <Ativar__conta server={port_server}/>
+    element: <Protecao__telas/>
   },
   {
     path: "/home",
@@ -94,6 +109,10 @@ const rotas = createBrowserRouter([
   {
     path: "/configuracao_conta",
     element: <Protecao__telas/>
+  },
+  {
+    path: "*",
+    element: <Pagina_nao_encotrada/>
   }
 ])
 

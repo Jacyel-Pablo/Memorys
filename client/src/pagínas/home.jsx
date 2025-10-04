@@ -11,7 +11,7 @@ import botao_deslike_selecionado from "../assets/botão deslike selecionado.png"
 import { WhatsappIcon, WhatsappShareButton, XIcon, TwitterShareButton, EmailIcon, EmailShareButton } from "react-share"
 import copy from "copy-to-clipboard"
 import copiar_link from "./source/Copiar link.png"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 export default function Home(props)
 {
@@ -56,6 +56,8 @@ export default function Home(props)
         // Saber qual a mensagem que deve se apagada
         id_mensagem: "",
     })
+
+    const mensagemRef = useRef()
 
     const server = props.server
 
@@ -316,7 +318,38 @@ export default function Home(props)
         }).then(dados1 => dados1.json()).then(dados1 => {
             switch (dados1) {
                 case true:
-                    location.href = "/home"
+                    const botao_excluir = mensagemRef.current.target
+                    botao_excluir.className = estilos.container__mensagem__apagadar
+
+                    const elemento_main = mensagemRef.current.target.parentNode.parentElement
+                    elemento_main.className = estilos.container__mensagem__apagadar
+
+                    const cabecalho = mensagemRef.current.target.parentNode
+                    cabecalho.className = estilos.container__mensagem__apagadar
+
+                    const foto_de_perfil = mensagemRef.current.target.parentNode.children[0].children[0].children[0]
+                    foto_de_perfil.className = estilos.container__mensagem__apagadar
+
+                    const like = mensagemRef.current.target.parentNode.children[2].parentElement.parentNode.children[3].children[0].children[0].children[0]
+                    like.className = estilos.container__mensagem__apagadar
+
+                    const deslike = mensagemRef.current.target.parentNode.children[2].parentElement.parentNode.children[3].children[0].children[1].children[0]
+                    deslike.className = estilos.container__mensagem__apagadar
+
+                    const foto_compartilhar = mensagemRef.current.target.parentNode.parentNode.children[3].children[0].children[3].children[0]
+                    foto_compartilhar.className = estilos.container__mensagem__apagadar
+
+                    const mensagem_avaliacao = mensagemRef.current.target.parentNode.parentNode.children[3].children[0]
+                    mensagem_avaliacao.className = estilos.container__mensagem__apagadar
+
+                    const container_foto = mensagemRef.current.target.parentNode.parentNode.children[2]
+                    container_foto.className = estilos.container__mensagem__apagadar
+
+                    const comentarios = mensagemRef.current.target.parentNode.parentNode.children[3].children[1]
+                    comentarios.className = estilos.container__mensagem__apagadar
+
+                    abrir_janela_apagar_mensagem()
+
                     break
 
                 case false:
@@ -897,7 +930,7 @@ export default function Home(props)
                 </div>
             </div>
 
-            {/* Janela de deletar conta */}
+            {/* Janela de deletar mensagem */}
             <div id="deletar" className={estilos_config.del} style={{"height": `${dados.janela_apagar_msg.alturar_largura_deleta_conta}vh`, "width": `${dados.janela_apagar_msg.alturar_largura_deleta_conta}vw`}}>
 
                 <img onClick={() => abrir_janela_apagar_mensagem()} className={estilos.foto__mensagem__zoom} src={dados.janela_apagar_msg.diretorio} alt=" " style={dados.janela_apagar_msg.largura__foto}/>
@@ -1013,7 +1046,6 @@ export default function Home(props)
                         </>
 
                         {dados.msg_infor.map((mensagem, index) => (
-                            // console.log(mensagem[0][index]["fotos"][0], mensagem[0][index]["fotos"][0].length)
 
                             <div key={index} className={estilos.container__mensagem}>
                                 {/* Mensagem dos usuários */}
@@ -1042,7 +1074,10 @@ export default function Home(props)
 
                                     {/* botão de excluir a mensagem */}
                                     {mensagem[0][index]["usuario"] ? 
-                                        <input onClick={() => {
+                                        <input onClick={(e) => {
+
+                                            mensagemRef.current = e
+
                                             abrir_janela = true,
 
                                             setDados(copiar => ({
@@ -1054,7 +1089,10 @@ export default function Home(props)
                                         }} className={estilos.container__mensagem__botao__excluir} type="button" value="X" />
 
                                         :
-                                        <input onClick={() => {
+                                        <input onClick={(e) => {
+
+                                            mensagemRef.current = e
+
                                             abrir_janela = true,
 
                                             setDados(copiar => ({
