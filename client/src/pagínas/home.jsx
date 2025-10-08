@@ -343,7 +343,6 @@ export default function Home(props)
         }).then(res => res.json()).then(res => {
             switch (res) {
                 case true:
-                    console.log(e)
                     // Removendo box comentario
                     e.target.parentNode.parentNode.className = estilos.container__mensagem__apagadar
                     e.target.parentNode.parentNode.style.marginLeft = "1000000000%"
