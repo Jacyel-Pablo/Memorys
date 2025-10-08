@@ -957,22 +957,52 @@ app.get("/pegar__fotos__videos__mensagens",
 app.post("/enviar_comentarios", async ( req, res ) => {
 
     try {
-        const { id_mensagem, email, texto } = req.body
+        const { foto, nome, id_mensagem, email, texto } = req.body
 
-        await prisma.memorys_Comentarios.create({
+        const comentario = await prisma.memorys_Comentarios.create({
             data: {
+                foto_de_perfil: foto,
+                nome: nome,
                 id_mensagem: id_mensagem,
                 email_do_usuário: email,
                 texto_da_mensagem: texto
             }
         })
 
-        res.status(200).send(true)
+        res.status(200).send({id: comentario.id})
 
     } catch (e) {
         res.status(404).send(e)
     }
 })
+
+app.delete("/apagar_comentarios",     
+    validar(z.object({
+        body: z.object({
+            id: z.string().cuid().min(5)
+        })
+
+    })),
+
+    async ( req, res ) => {
+        try {
+            const { id } = req.body
+
+            await prisma.memorys_Comentarios.delete({
+                where: {
+                    id: id
+                }
+            })
+
+            res.status(201).send(true)
+
+        } catch (e) {
+            console.log(e)
+
+            res.status(404).send(false)
+        }
+    }
+)
 
 app.get("/pegar_comentarios", async ( req, res ) => {
 
@@ -1014,6 +1044,32 @@ app.get("/encontrar__usuario",
     } catch (e) {
         console.log(e)
         res.status(404).send(e)
+    }
+})
+
+app.get("/pegar__local__foto",
+    validar(z.object({
+        query: z.object({
+            id: z.string().cuid().min(3)
+        })
+        
+    })), 
+    
+    async ( req, res ) => {
+    
+    try {
+        const id = req.query.id
+
+        const usuario = await prisma.memorys_Usuario.findUnique({
+            where: {
+                id: id
+            }
+        })
+
+        res.status(200).send({"foto": usuario.foto_de_perfil})
+
+    } catch (e) {
+        res.status(404).send(false)
     }
 })
 

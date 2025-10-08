@@ -24,6 +24,7 @@ model Memorys_Usuario {
   seguindo          Memorys_Seguindo[]
   foto              Memorys_Foto[]
   videos            Memorys_Video[]
+  comentarios       Memorys_Comentarios[]
 }
 
 model Memorys_Mensagem {
@@ -81,12 +82,15 @@ model Memorys_Video{
 
 model Memorys_Comentarios {
   id                 String          @id   @unique  @default(cuid())
+  foto_de_perfil     String?
+  nome               String
   id_mensagem        String
   email_do_usuário   String
   texto_da_mensagem  String
 
   id_msg            Memorys_Mensagem @relation(fields: [id_mensagem], references: [id])
   resposta          Memorys_Resposta_comentario[]
+  usuario           Memorys_Usuario  @relation(fields: [nome], references: [nome])
 }
 
 model Memorys_Resposta_comentario {

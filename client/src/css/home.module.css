@@ -413,7 +413,7 @@
     background-color: gray;
     margin-top: 0.5%;
     margin-left: 5%;
-    font-size: 120%;
+    font-size: 110%;
     border: 0px solid;
     border-bottom: 2px solid black;
 }
@@ -736,5 +736,17 @@
     .compartilhar__botao__com__icone__das__redes__sociais__email{
         margin-top: 1.5dvh;
         margin-bottom: 10dvh;
+    }
+
+    /* Comentario */
+
+    .comentario__box__submit__responde__ativo{
+        font-size: 65%;
+    }
+    .comentario__box__submit__cancelar__ativo{
+        font-size: 53%;
+    }
+    .comentario__box__submit__enviar__ativo{
+        font-size: 70%;
     }
 }

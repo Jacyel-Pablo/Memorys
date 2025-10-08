@@ -63,6 +63,8 @@ CREATE TABLE "Memorys_Video" (
 -- CreateTable
 CREATE TABLE "Memorys_Comentarios" (
     "id" TEXT NOT NULL,
+    "foto_de_perfil" TEXT,
+    "nome" TEXT NOT NULL,
     "id_mensagem" TEXT NOT NULL,
     "email_do_usuário" TEXT NOT NULL,
     "texto_da_mensagem" TEXT NOT NULL,
@@ -170,6 +172,9 @@ ALTER TABLE "Memorys_Video" ADD CONSTRAINT "Memorys_Video_nome_user_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "Memorys_Comentarios" ADD CONSTRAINT "Memorys_Comentarios_id_mensagem_fkey" FOREIGN KEY ("id_mensagem") REFERENCES "Memorys_Mensagem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Memorys_Comentarios" ADD CONSTRAINT "Memorys_Comentarios_nome_fkey" FOREIGN KEY ("nome") REFERENCES "Memorys_Usuario"("nome") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Memorys_Resposta_comentario" ADD CONSTRAINT "Memorys_Resposta_comentario_id_comentario_fkey" FOREIGN KEY ("id_comentario") REFERENCES "Memorys_Comentarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

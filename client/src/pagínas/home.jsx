@@ -89,15 +89,18 @@ export default function Home(props)
 
     function pegar_dados(e)
     {
+        // Verifica se a entrada e um comentário
         if (e.target.id.split(" ")[0] === "comentario") {
             let mensagens = dados.msg_infor
 
-            mensagens[0][e.target.id.split(" ")[1]][0]["comentario_input"] = e.target.value
+            // Pegar o input do comentário e adicionar o que o usuário escreveu
+            mensagens[e.target.id.split(" ")[1]][0][e.target.id.split(" ")[1]]["comentario_input"] = e.target.value
             
+            // Enviar os dados para o setDados
             setDados(copiar => ({
                 ...copiar,
                 msg_infor: [...mensagens],
-                id_mensagem: mensagens[0][e.target.id.split(" ")[1]][0]["id_msg"]
+                id_mensagem: mensagens[e.target.id.split(" ")[1]][0][e.target.id.split(" ")[1]]["id_msg"]
             }))
 
         } else {
@@ -273,28 +276,97 @@ export default function Home(props)
     {
         e.preventDefault()
 
-        await fetch(`${server}/enviar_comentarios`, {
-            method: "POST",
+        // Pegar o nome e o local da foto de perfil
+        await fetch(`${server}/pegar__nome?id=${localStorage.getItem("id")}`).then(nome => nome.json()).then(async nome => {
+            await fetch(`${server}/pegar__local__foto?id=${localStorage.getItem("id")}`).then(foto => foto.json()).then(async foto => {
+                // Enviado comentario do usuário
+                await fetch(`${server}/enviar_comentarios`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        foto: foto["foto"],
+                        nome: nome["nome"],
+                        id_mensagem: dados.id_mensagem,
+                        email: localStorage.getItem("email"),
+                        texto: dados.msg_infor[index][0][index]["comentario_input"]
+                    })
+
+                }).then(res => res.json()).then(res => {
+
+                    if (res != false) {
+                        let mensagens = dados.msg_infor
+
+                        mensagens[index][0][index]["comentario"].push({
+                            "email_do_usuário": localStorage.getItem("email"),
+                            "foto_de_perfil": foto["foto"],
+                            "id": res["id"],
+                            "id_mensagem": dados.id_mensagem,
+                            "nome": nome["nome"],
+                            "texto_da_mensagem": dados.msg_infor[index][0][index]["comentario_input"]
+                        })
+
+                        mensagens[index][0][index]["comentario_input"] = ""
+
+                        setDados(copiar => ({
+                            ...copiar,
+                            msg_infor: [...mensagens]
+                        }))
+
+                    } else {
+                        mensagens[index][0][index]["comentario_input"] = ""
+                        
+                        alert("Ocorreu um erro ao tentar enviar comentario")
+                    }
+
+                })
+            })
+        })
+    }
+
+    // Função apagar comentarios
+    async function apagar_comentarios(e)
+    {
+        // Pegar o id do comentario
+        const id_comentario = e.target.id
+
+        await fetch(`${server}/apagar_comentarios`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                id_mensagem: dados.id_mensagem,
-                email: localStorage.getItem("email"),
-                texto: dados.msg_infor[0][index][0]["comentario_input"]
+                id: id_comentario
             })
 
         }).then(res => res.json()).then(res => {
-            
-            let mensagens = dados.msg_infor
+            switch (res) {
+                case true:
+                    console.log(e)
+                    // Removendo box comentario
+                    e.target.parentNode.parentNode.className = estilos.container__mensagem__apagadar
+                    e.target.parentNode.parentNode.style.marginLeft = "1000000000%"
 
-            mensagens[0][index][0]["comentario_input"] = ""
-            
-            setDados(copiar => ({
-                ...copiar,
-                msg_infor: [...mensagens]
-            }))
+                    // Removendo informações do usuário
+                    e.target.parentNode.className = estilos.container__mensagem__apagadar
 
+                    e.target.className = estilos.container__mensagem__apagadar
+
+                    // Removendo campo da mensagem
+                    e.target.parentNode.parentNode.children[1].className = estilos.container__mensagem__apagadar
+
+                    // Removendo parte das optções
+                    e.target.parentNode.parentNode.children[2].className = estilos.container__mensagem__apagadar
+
+                    // Removendo resposta a comentarios
+                    e.target.parentNode.parentNode.children[3].className = estilos.container__mensagem__apagadar
+                    break
+
+                case false:
+                    alert("Ocorreu um erro ao tentar apagar o comentario")
+                    break
+            }
         })
     }
 
@@ -706,7 +778,7 @@ export default function Home(props)
                     for (let i = 0; i < dados1.length; i++) {
     
                         fetch(`${server}/pegar__midia__mensagens?id=${dados1[i].id}`).then(arquivos => arquivos.json().then(arquivos => {             
-                            fetch(`${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => {   
+                            fetch(`${server}/pegar_comentarios?id_msg=${dados1[i].id}`).then(comentarios => comentarios.json()).then(comentarios => { 
                                 index += 1
         
                                 contado += 1
@@ -888,6 +960,7 @@ export default function Home(props)
     }, [])
 
     useEffect(() => {
+        // Remover o verificado de id de mensagem
         localStorage.removeItem("msg")
 
     }, [dados])
@@ -1200,10 +1273,10 @@ export default function Home(props)
                                 
                                                         {/* Nome do usuário */}
 
+                                                        <p className={estilos.comentario__box__nome__usuario}>{mensagem[0][index]["nome"]}</p>
 
-                                                        <p className={estilos.comentario__box__nome__usuario}></p>
-
-                                                        <input className={estilos.comentario__box__botao__excluir__comentario} type="button" value="X" />
+                                                        {/* Botão apagar comentario */}
+                                                        <input onClick={e => apagar_comentarios(e)} className={estilos.comentario__box__botao__excluir__comentario} id={comentario["id"]} type="button" value="X" />
                                                     </div>
 
                                                     {/* Mensagem do comentario */}
